@@ -8,5 +8,19 @@
     "actorsDirNames": {
         "foreground": "foreground",
         "background": "background"
+    },
+    "extensions":
+    {
+        "class": ".class.php",
+        "interface": ".itf.php",
+        "trait": ".trait.php",
+        "include": ".inc.php",
+        "config": ".conf"
+    },
+    "path": {
+        "class": "/supporters/classes/",
+        "interface": "/supporters/interfaces/",
+        "trait": "/supporter/traits/",
+        "config": "/supporters/configs/"
     }
 }
