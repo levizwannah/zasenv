@@ -1,0 +1,12 @@
+{
+    "dirNames": {
+        "root": "api",
+        "supporters": "supporters",
+        "actors": "actors"
+    },
+
+    "actorsDirNames": {
+        "foreground": "foreground",
+        "background": "background"
+    }
+}
