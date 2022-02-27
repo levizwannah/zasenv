@@ -1,22 +1,24 @@
 {
-    "dirNames": {
-        "root": "api",
+    "directories": {
+        "root": "zasenv",
         "supporters": "supporters",
         "actors": "actors"
     },
 
-    "actorsDirNames": {
+    "actors": {
         "foreground": "foreground",
         "background": "background"
     },
+
     "extensions":
     {
         "class": ".class.php",
-        "interface": ".itf.php",
+        "interface": ".ifc.php",
         "trait": ".trait.php",
         "include": ".inc.php",
         "config": ".conf"
     },
+
     "path": {
         "class": "/supporters/classes/",
         "interface": "/supporters/interfaces/",
