@@ -106,6 +106,24 @@
             require($path);
             return true;
         }
+        
+        /**
+         * @param string $constantsName Loads The name of the class constants to load.
+         */
+        
+        public function loadConstantsClass(string $constantsClassName){
+            #constantsClassNames come with their namespaces attached
+            $aPath = $this->path->constantsClass;
+            $ext = $this->extensions->constantsClass;
+            $path = $this->getPath($constantsClassName, $ext, $aPath);
+
+            if(!file_exists($path)){
+                return false;
+            }
+
+            require($path);
+            return true;
+        } 
 
         /**
          * @param string $name Name to load. This will include the namespace plus specific name conventions.
@@ -137,6 +155,9 @@
                    }
                    case "interface": {
                        return $this->loadInterface($name);
+                   }
+                   case "constantsClass": {
+                       return $this->loadConstantsClass($name);
                    }
                    default: {
                         return $this->loadClass($name);
