@@ -33,7 +33,7 @@
 
         private function getPath($name, $extension, $path){
             #names contain their namespaces attached to them.
-            $name = preg_replace("/\\/", "/", strtolower($name));
+            $name = preg_replace("/\\\/", "/", strtolower($name));
             $fullPath = __DIR__."/$path/$name.$extension";
             
             return $fullPath;
@@ -115,6 +115,7 @@
             #constantsClassNames come with their namespaces attached
             $aPath = $this->path->constantsClass;
             $ext = $this->extensions->constantsClass;
+
             $path = $this->getPath($constantsClassName, $ext, $aPath);
 
             if(!file_exists($path)){
@@ -176,6 +177,7 @@
             }   
 
             spl_autoload_register([$this, "load"]);
+            echo "Autoloading...\n";
         }
     }
 

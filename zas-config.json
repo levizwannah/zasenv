@@ -15,22 +15,25 @@
         "abstractClass": "aclass.php",
         "interface": "ifc.php",
         "trait": "trait.php",
+        "constantsClass": "const.php",
         "include": "inc.php",
         "config": "conf"
     },
 
     "path": {
-        "class": "/supporters/classes/",
-        "abstractClass": "/supporters/classes/abstract",
-        "interface": "/supporters/interfaces/",
-        "trait": "/supporter/traits/",
-        "config": "/supporters/configs/"
+        "class": "/supporters/classes",
+        "abstractClass": "/supporters/abstracts",
+        "interface": "/supporters/interfaces",
+        "trait": "/supporter/traits",
+        "constantsClass": "/supporters/constants",
+        "config": "/supporters/configs"
     },
 
     "nameConventionsRegex": {
-        "abstractClass": "^Abstract\\w+*$",
+        "abstractClass": "^Abstract\\w+$",
         "interface": "^\\w+Interface$",
         "trait": "\\w+Trait$",
+        "constantsClass": "\\w+Constants$",
         "class": ".*"
     }
     

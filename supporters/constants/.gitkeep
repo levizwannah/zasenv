@@ -1,0 +1,2 @@
+Classes that only serve as constants will be placed in this directory.
+Enum could be used, but because of backward compatibility, we will use classes to wrap constants.
