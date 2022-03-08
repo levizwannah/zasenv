@@ -10,6 +10,10 @@
         
         # use traits
         #ut-here#
+
+        [C-VISIBILITY] function __construct(){
+            #code...
+        }
     }
 
 ?>
