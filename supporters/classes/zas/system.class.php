@@ -47,12 +47,8 @@
         /**
          * Creates a new file
          */
-        public function createFile(string $fileName, string $directory = "."){
-            $fullPath = $directory . DIRECTORY_SEPARATOR . $fileName;
-
+        public function createFile(string $fullPath){
             if(file_exists($fullPath)) return $fullPath;
-
-            $directory = $this->makeDirectory($directory);
 
             $output = [];
             $resultCode = null;
@@ -89,7 +85,7 @@
             $returnCode = null;
             $cmd = "";
 
-            $dirPath = preg_replace("/\/\\/", DIRECTORY_SEPARATOR, $dirPath);
+            $dirPath = preg_replace("/[\/\\\]/", DIRECTORY_SEPARATOR, $dirPath);
 
             switch($this->OS){
                 case System::WINDOWS:

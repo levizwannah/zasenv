@@ -23,7 +23,7 @@
             $root = $this->zasConfig->directories->root;
 
             $parentDir = preg_split("/$root/", __DIR__);
-            $this->rootDir = $parentDir[0]."/$root";
+            $this->rootDir = $parentDir[0].DIRECTORY_SEPARATOR."$root";
         }
 
         /**
@@ -37,35 +37,73 @@
         /**
          * Splits a name into parts by non-alpha numeric characters.
          */
-        private function getParts($name){
-            return preg_split("/\W/", $name);
+        public function removeSlashes($name){
+            return preg_replace("/(^\W+)|(\W+$)/", "", $name);
         }
+
+        /**
+         * Given a fully qualified name, return the directory path component of the name.
+         */
+        public function homeDir($qualifiedName){
+            return preg_replace("/(\W+)?[\w]+$/", "", $qualifiedName);
+        } 
 
         /**
          * Creates a directory in a subdirectory
          */
-        private function makeDirectory($parentPath, $subdir){
-            $core = new System();
-            $subdir = preg_replace("/^\d+/", "", $subdir);
-            $parentPath = preg_replace("/^[\d+(\/\d+)]/", "", $parentPath);
-            $fullPath = "$parentPath/$subdir";
-            return $core->makeDirectory($fullPath);
+        private function makeDirectory($path){
+            return (new System())->makeDirectory($path);
+        }
+
+        /**
+         * Returns the name from the qualified name.
+         * for example, levi\zwannah will return zwannah.
+         */
+        public function getName($qualifiedName){
+            $actualName = preg_split("/\W/", $qualifiedName);
+            end($actualName);
+            return current($actualName);
+        }
+
+        /**
+         * Capitalizes letters in a string 
+         * using $separator = " \t\r\n\f\v'/-.|\\"
+         */
+        public function capitalizeWords($string){
+            return ucwords($string, " \t\r\n\f\v'/-.|\\");
+        }
+
+        /**
+         * Makes a directory path a valid php namesapce name.
+         */
+        public function getNamespaceText($name){
+            $name = preg_replace("/\W/", "\\", $name);
+            if($name[0] !== "\\") $name = "\\".$name;
+            
+            return $this->capitalizeWords($name);
         }
 
         /**
          * Create classes following the convention specified in the zas configuration file.
          */
         public function makeClass(string $className, string $parentClassName = null, array $impInterfaces = [], array $useTraits = [],bool $constantsClass = false ){
-            $nameParts = $this->getParts($className);
-            $size = count($nameParts);
+            $namespace = $this->getNamespaceText($this->homeDir($className));
 
-            if($size < 1) return ZasConstants::ERR_CNE;
+            $homeDir = strtolower($namespace);
 
-            for($i = 0; $i < $size - 1; $i++ ){
-                # make the subdirectories
-                $parentDir = $this->rootDir . "/" . $this->zasConfig->path->class;
-                $this->makeDirectory($parentDir, $nameParts[$i]);
-            }
+            # get the class name
+            $actualName = $this->capitalizeWords($this->getName($className));
+
+
+            $homeDir = $this->rootDir . $this->zasConfig->path->class. DIRECTORY_SEPARATOR. $homeDir;
+            $core = new System();
+            $core->makeDirectory($homeDir);
+            
+            $fileName = $core->createFile($homeDir.DIRECTORY_SEPARATOR. strtolower($actualName). ".". $this->zasConfig->extensions->class);
+            
+            # 
+            
+
 
         }
     }
