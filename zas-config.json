@@ -20,6 +20,14 @@
         "config": "conf"
     },
 
+    "templatePath": {
+        "class": "/dev/templates/class.tpl",
+        "abstractClass": "/dev/templates/aclass.tpl",
+        "interface": "/dev/templates/interface.tpl",
+        "trait": "/dev/templates/trait.tpl",
+        "constantsClass": "/dev/templates/const.tpl"
+    },
+
     "path": {
         "class": "/supporters/classes",
         "abstractClass": "/supporters/abstracts",
