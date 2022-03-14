@@ -11,6 +11,6 @@
      use Zas\ZasHelper;
 
      $zas = new ZasHelper();
-     $zas->makeClass("ser\Test");
+     $zas->makeClass("Ser\Test");
      
 ?>

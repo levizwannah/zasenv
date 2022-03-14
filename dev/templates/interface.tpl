@@ -3,7 +3,7 @@
 
     [NS]
 
-    #uns-here#
+    #uns#
 
 
     interface [IN] <EXTENSIONS> {

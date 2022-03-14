@@ -3,13 +3,13 @@
 
     [NS]
 
-    #uns-here#
+    #uns#
 
 
     class [CN] <INHERITANCE> <CONTRACTS> {
         
         # use traits
-        #ut-here#
+        #ut#
 
         [C-VISIBILITY] function __construct(){
             #code...

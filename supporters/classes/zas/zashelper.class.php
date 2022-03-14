@@ -101,8 +101,6 @@
             
             $fileName = $core->createFile($homeDir.DIRECTORY_SEPARATOR. strtolower($actualName). ".". $this->zasConfig->extensions->class);
             
-            # 
-            
 
 
         }

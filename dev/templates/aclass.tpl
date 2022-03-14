@@ -3,13 +3,13 @@
 
     [NS]
 
-    #uns-here#
+    #uns#
 
 
     abstract class [CN] <INHERITANCE> <CONTRACTS> {
         
         # use traits
-        #ut-here#
+        #ut#
 
     }
 

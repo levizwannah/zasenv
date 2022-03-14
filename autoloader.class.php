@@ -4,7 +4,10 @@
      *  **requires that the zas-config.json be configured properly.**
      */
     class AutoLoader{
-
+        const ZC_TRAIT = "trait";
+        const ZC_CLASS = "class";
+        const ZC_ACLASS = "abstractClass";
+        const ZC_CONST = "constantsClass";
         /**
          * Path Object from the zas-config
          */
@@ -140,13 +143,18 @@
 
             #are we actually loading something?
             if($size < 1) return;
-
             $actualName = $splittedNames[$size - 1];
-            unset($splittedNames); #remove unsed variables
 
             foreach((array)$this->convRegex as $type => $regex){
                if(!preg_match("/$regex/", $actualName)) continue;
 
+                $nextRegex = preg_replace("/\\\w{1}/", "", $regex);
+                $nextRegex = preg_replace("/\W/", "", $nextRegex);
+                $actualName = preg_replace("/$nextRegex/", "", $actualName);
+
+                array_pop($splittedNames);
+                $name = implode("\\", $splittedNames) . "\\$actualName";
+               
                switch($type){
                    case "abstractClass": {
                        return $this->loadAbstractClass($name);
