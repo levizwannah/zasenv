@@ -47,9 +47,22 @@ use Closure;
         private function formatContracts(){
 
         }
-
+        
+        /**
+         * resolveCollision for namespaces used in class such as
+         *
+         * @param  array $names
+         * @return array $resolved - a map containing [names => qualifiedNames]
+         */
         private function resolveCollision(array $names){
-            
+            $resolved = [];
+            $tree = new NsBST();
+            foreach($names as $n){
+                    $tree->insert($n);
+            }
+
+            $tree->getResolvedQNames($resolved);
+            return $resolved;
         }
 
         /**

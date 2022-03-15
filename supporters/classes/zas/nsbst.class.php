@@ -10,7 +10,12 @@
      * is able to detect this and return an alias to be used such as `Company\Worker as cWorker` and `Server\Worker as sWorker` to be used
      * at the top of the file for namespace usage declaration.
      */
-    class NsBST {        
+    class NsBST {      
+      /**
+       * @var string
+       */
+      const IN_ORDER = "inorder";
+      
         /**
          * root
          *
@@ -23,7 +28,13 @@
         #ut#
 
         public function  __construct() {}
-
+        
+        /**
+         * insert
+         * data into the Binary tree. 
+         * @param  mixed $qualifiedName
+         * @return void
+         */
         public function insert($qualifiedName) {
                $node = new Node($qualifiedName);
 
@@ -41,7 +52,8 @@
                        
                               if(!empty($current->left)) {
                                  $current = $current->left;
-                              } else {
+                              } 
+                              else {
                                  $current->left = $node;
                                  break; 
                               }
@@ -50,7 +62,8 @@
 
                               if(!empty($current->right)) {
                                  $current = $current->right;
-                              } else {
+                              } 
+                              else {
                                  $current->right = $node;
                                  break; 
                               }
@@ -129,6 +142,10 @@
 
                         $node->putQUsageName($container);
 
+        }
+
+        public function getResolvedQNames(&$container){
+           $this->traverse(NsBST::IN_ORDER, $container);
         }
     }
 

@@ -82,10 +82,9 @@
         public function loadTrait(string $traitName){
             #traitNames come with their namespaces attached
             $tPath = $this->path->trait;
-            echo "Tpath: $tPath\n";
             $ext = $this->extensions->trait;
             $path = $this->getPath($traitName, $ext, $tPath);
-            echo "Final trait path: $path\n";
+
             if(!file_exists($path)){
                 return false;
             }
@@ -155,7 +154,7 @@
 
                 array_pop($splittedNames);
                 $name = implode("\\", $splittedNames) . "\\$actualName";
-                echo "$type => $regex\n";
+    
                switch($type){
                    case "abstractClass": {
                        return $this->loadAbstractClass($name);

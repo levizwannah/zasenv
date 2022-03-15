@@ -61,7 +61,7 @@
          */
         public function putQUsageName(array &$container){
             if(count($this->namespace) == 1){
-                $container[] = $this->getQualifiedName($this->namespace[0]);
+                $container[$this->name] = $this->getQualifiedName($this->namespace[0]);
                 return;
             }
 
@@ -75,7 +75,7 @@
                 }
 
                 $name = $this->name . " as $prefix".$this->name;
-                $container[] = $this->getQualifiedName($ns, $name);
+                $container[$name] = $this->getQualifiedName($ns, $name);
             }
             
         }
