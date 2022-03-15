@@ -32,7 +32,7 @@
         "class": "/supporters/classes",
         "abstractClass": "/supporters/abstracts",
         "interface": "/supporters/interfaces",
-        "trait": "/supporter/traits",
+        "trait": "/supporters/traits",
         "constantsClass": "/supporters/constants",
         "config": "/supporters/configs"
     },

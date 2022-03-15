@@ -1,7 +1,15 @@
 <?php
 
     namespace Zas;
-
+    
+    
+    /**
+     * NsBST (Namespace Binary Search Tree) - For handling namespace name collision.
+     * For example, Company\Worker and Server\Worker used in the same file will require that the
+     * developer explicitly use the namespace when creating a worker. The NsBst  
+     * is able to detect this and return an alias to be used such as `Company\Worker as cWorker` and `Server\Worker as sWorker` to be used
+     * at the top of the file for namespace usage declaration.
+     */
     class NsBST {        
         /**
          * root
@@ -48,7 +56,7 @@
                               }
 
                         } else {
-                          $current->namespace[] =  $node->namespace;
+                          $current->addNs($node->namespace);
                           break;
                         }
                   } 
@@ -77,14 +85,13 @@
 
         } 
 
-        public function _inorder($node, &$container) {
+        public function _inorder(Node $node, &$container) {
 
                         if(!empty($node->left)) {
                            $this->_inorder($node->left, $container); 
                         } 
 
-                        //echo $node. " ";
-                        $container[] = $node->__toString();
+                        $node->putQUsageName($container);
 
                         if(!empty($node->right)) {
                            $this->_inorder($node->right, $container); 
@@ -92,11 +99,11 @@
         }
 
 
-        public function _preorder($node, &$container) {
+        public function _preorder(Node $node, &$container) {
 
-                        //echo $node. " ";
-                        $container[] = $node->__toString();
-
+                        
+                        $node->putQUsageName($container);
+                        
                         if(!empty($node->left)) {
                            $this->_preorder($node->left, $container); 
                         } 
@@ -108,7 +115,7 @@
         }
 
 
-        public function _postorder($node, &$container) {
+        public function _postorder(Node $node, &$container) {
 
 
                         if(!empty($node->left)) {
@@ -120,8 +127,7 @@
                            $this->_postorder($node->right, $container); 
                         } 
 
-                        //echo $node. " ";
-                        $container[] = $node->__toString();
+                        $node->putQUsageName($container);
 
         }
     }
