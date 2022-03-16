@@ -73,9 +73,9 @@
                 foreach($splittedNs as $sns){
                     $prefix .= strtolower($sns[0]);
                 }
-
+                $prefixedName = $prefix.$this->name;
                 $name = $this->name . " as $prefix".$this->name;
-                $container[$name] = $this->getQualifiedName($ns, $name);
+                $container[$prefixedName] = $this->getQualifiedName($ns, $name);
             }
             
         }

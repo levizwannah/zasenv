@@ -24,7 +24,7 @@ use Closure;
         protected $traits = [];
         protected $parent = null;
 
-        public function __construct($changeMap)
+        public function __construct(array $changeMap)
         {
             parent::__construct($changeMap, ClassObject::$temPath);
 
@@ -45,7 +45,7 @@ use Closure;
          * converts the interfaces to a formatable
          */
         private function formatContracts(){
-
+            
         }
         
         /**
