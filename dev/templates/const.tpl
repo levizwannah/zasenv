@@ -1,15 +1,18 @@
 <?php
-    # Comments with #...# are required by `zas` for code insertion. Do not remove nor modify them!
+    // Comments with #.# are required by `zas` for code insertion.
 
     [NS]
 
-    /**
-    * Constants for [CN] are in this class.
-    */
-    
-    class [CN] {
+    #uns#
 
-        private function __construct(){}
+    class [CN] <INHERITANCE> <CONTRACTS> {
+
+        # use traits
+        #ut#
+
+        [C-VISIBILITY] function __construct(){
+            #code...
+        }
     }
 
 ?>

@@ -69,7 +69,7 @@
                               }
 
                         } else {
-                          $current->addNs($node->namespace);
+                          $current->addNs($node->namespace[0]);
                           break;
                         }
                   } 
@@ -98,13 +98,15 @@
 
         } 
 
-        public function _inorder(Node $node, &$container) {
+        public function _inorder(Node|null $node, &$container) {
 
                         if(!empty($node->left)) {
                            $this->_inorder($node->left, $container); 
                         } 
 
-                        $node->putQUsageName($container);
+                        if($node){
+                           $node->putQUsageName($container);
+                        }
 
                         if(!empty($node->right)) {
                            $this->_inorder($node->right, $container); 
@@ -112,10 +114,12 @@
         }
 
 
-        public function _preorder(Node $node, &$container) {
+        public function _preorder(Node|null $node, &$container) {
 
-                        
-                        $node->putQUsageName($container);
+                        if($node){
+                           $node->putQUsageName($container);
+                        }
+                       
                         
                         if(!empty($node->left)) {
                            $this->_preorder($node->left, $container); 
@@ -128,7 +132,7 @@
         }
 
 
-        public function _postorder(Node $node, &$container) {
+        public function _postorder(Node|null $node, &$container) {
 
 
                         if(!empty($node->left)) {
@@ -140,7 +144,9 @@
                            $this->_postorder($node->right, $container); 
                         } 
 
-                        $node->putQUsageName($container);
+                        if($node){
+                           $node->putQUsageName($container);
+                        }
 
         }
 

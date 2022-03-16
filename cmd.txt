@@ -1,0 +1,19 @@
+Zas Commands:
+    1. php zas make [container] [name] [options]
+       i. [container]:  class - for class 
+                        ab-class - for abstract class, 
+                        trait - for trait, 
+                        interface - for interface, 
+                        const-class - for constants class
+
+      ii. [name]: name for the container.
+                  don't include the container 
+                  function in the  name. for 
+                  example, trait name walk, will
+                  be converted to walkTrait.
+
+     iii. [options]: options for the container being created.
+            - class: [-i interface1, interface2, interface2, ..., interfaceN] 
+                     [-p parentClass]
+                     [-t trait1, trait2, trait3, ..., traitN]
+                      

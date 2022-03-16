@@ -1,6 +1,7 @@
 <?php
     namespace Zas;
-        
+    use Zas\AbstractTranspiler;    
+
     /**
      * Transpiler base class for other transpilers
      */
@@ -32,10 +33,19 @@
          * @return void
          */
         public function transpile()
-        {
-            foreach($this->changeMap as $key => $value){
-                $this->templateCode = str_replace($key, $value, $this->templateCode);
+        {   $tplCode = $this->templateCode;
+            $this->changeMap += $this->defaultChangeMap;
+            
+            #fix namespace
+            if(!empty($this->changeMap[ClassObject::NS])){
+                $this->changeMap[ClassObject::NS] = "namespace ".$this->changeMap[ClassObject::NS] . ";";
             }
+
+            foreach($this->changeMap as $key => $value){
+                $tplCode = str_replace($key, $value, $tplCode);
+            }
+
+            $this->phpCode = $tplCode;
         }
     }
 

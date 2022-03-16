@@ -40,7 +40,7 @@
          */
         public function getNamespaceText($name){
             $name = preg_replace("/\W/", "\\", $name);
-            if($name[0] !== "\\") $name = "\\".$name;
+            if(isset($name[0]) && $name[0] !== "\\") $name = "\\".$name;
             
             return $this->capitalizeWords($name);
         }

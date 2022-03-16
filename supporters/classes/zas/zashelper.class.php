@@ -49,10 +49,20 @@
             return (new System())->makeDirectory($path);
         }
 
+        private function getFullPath(string $path){
+            return $this->rootDir . $path;
+        }
+        
         /**
-         * Create classes following the convention specified in the zas configuration file.
+         * Creates a class following the ZAS and the conventions specified in the zas-config file
+         * @param string $className - qualified class name
+         * @param string $parentClassName - qualified parent class name
+         * @param array $impInterfaces - qualified interfaces names
+         * @param array $useTraits - qualified traits names
+         * 
+         * @return void
          */
-        public function makeClass(string $className, string $parentClassName = null, array $impInterfaces = [], array $useTraits = [],bool $constantsClass = false ){
+        public function makeClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = []){
             $namespace = $this->getNamespaceText($this->homeDir($className));
 
             $homeDir = strtolower($namespace);
@@ -61,14 +71,47 @@
             $actualName = $this->capitalizeWords($this->getName($className));
 
 
-            $homeDir = $this->rootDir . $this->zasConfig->path->class. DIRECTORY_SEPARATOR. $homeDir;
+            $homeDir = $this->getFullPath($this->zasConfig->path->class) . DIRECTORY_SEPARATOR. $homeDir;
             $core = new System();
             $core->makeDirectory($homeDir);
             
             $fileName = $core->createFile($homeDir.DIRECTORY_SEPARATOR. strtolower($actualName). ".". $this->zasConfig->extensions->class);
             
+            ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->class);
+            //echo "Template path: ", ClassObject::$temPath, "\n";
 
+            $classObj = new ClassObject([
+                ClassObject::CN => $actualName,
+                ClassObject::NS => preg_replace("/^\W/", "", $namespace)
+            ]);
 
+            # set properties
+            $classObj->setQualifiedName($className);
+            $classObj->setParent($parentClassName);
+            $classObj->setTraits($useTraits);
+            $classObj->setInterfaces($impInterfaces);
+
+            file_put_contents($fileName, $classObj->makePhpCode());
+            
+        }
+
+        public function printHelp(){
+            echo file_get_contents("cmd.txt");
+        }
+
+        /**
+         * Handles the commands
+         * @param int $argc
+         * @param array $argv
+         * 
+         * @return void
+         */
+        public function process(int &$argc, array &$argv){
+            if($argc < 2){
+                $this->printHelp();
+            }
+
+            
         }
     }
 
