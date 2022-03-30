@@ -60,7 +60,7 @@
          * @param array $impInterfaces - qualified interfaces names
          * @param array $useTraits - qualified traits names
          * 
-         * @return void
+         * @return string $fileName;
          */
         public function makeClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = []){
             $namespace = $this->getNamespaceText($this->homeDir($className));
@@ -92,9 +92,25 @@
             $classObj->setInterfaces($impInterfaces);
 
             file_put_contents($fileName, $classObj->makePhpCode());
-            
+            return $fileName;
         }
 
+        /**
+         * @param mixed $interfaceName
+         * @param array $extendsInterfaces
+         * 
+         * @return string
+         */
+        private function makeInterface(string $interfaceName, array $extendsInterfaces){
+
+            return "";
+        }
+
+
+        /**
+         * Prints the commands for ZAS
+         * @return void
+         */
         public function printHelp(){
             echo file_get_contents("cmd.txt");
         }
@@ -107,11 +123,79 @@
          * @return void
          */
         public function process(int &$argc, array &$argv){
+            
             if($argc < 2){
                 $this->printHelp();
+                return;
             }
 
+            # show list
+            $mainCommand = strtolower($argv[0]);
+
+            switch($mainCommand){
+                case ZasConstants::Z_MAKE:
+                    {
+                        $this->execMake($argc, $argv);
+                        break;
+                    }
+            }
             
+        }
+        
+        #----------------------------------------------------
+        # Functions for executing different commands
+        #----------------------------------------------------
+
+        /**
+         * Executes the make command
+         * @param int $argc
+         * @param array $argv
+         * 
+         * @return [type]
+         */
+        private function execMake(int $argc, array $argv){
+            $container = strtolower($argv[2]);
+            $containerName = $argv[3];
+
+            switch($container){
+                case ZasConstants::Z_CLASS:
+                    {
+                        
+                        break;
+                    }
+                case ZasConstants::Z_INFC:
+                    {
+                        break;
+                    }
+                case ZasConstants::Z_TRAIT:
+                    {
+                        break;
+                    }
+                case ZasConstants::Z_CONST:
+                    {
+                        break;
+                    }
+                case ZasConstants::Z_ABCLASS:
+                    {
+                        break;
+                    }
+                default:
+                   {
+                       ZasHelper::log("Command incomplete:: please select the container");
+                       $this->printHelp();
+                   }
+                
+            }
+        }
+
+        /**
+         * Write text to the console
+         * @param string $txt
+         * 
+         * @return void
+         */
+        public static function log(string $txt){
+            echo "$txt\n";
         }
     }
 

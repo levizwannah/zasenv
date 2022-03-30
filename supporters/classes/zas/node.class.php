@@ -66,7 +66,7 @@
             }
 
             foreach($this->namespace as $index => $ns){
-                $splittedNs = preg_split("/\W/", $ns);
+                $splittedNs = array_filter(preg_split("/\W/", $ns));
                 
                 # build the prefix to resolve name collision
                 $prefix = "";

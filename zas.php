@@ -8,7 +8,7 @@
      use Zas\ZasHelper;
   
      $zas = new ZasHelper();
-
+     $zas->makeClass("Server/Worker/cluster", "Server", ["Server/ServerInterface", "Human/ServerInterface"], ["Server/ServerTrait", "Human/ServerTrait"]);
      $zas->process($argc, $argv);
      
 ?>

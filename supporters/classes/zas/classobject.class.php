@@ -106,8 +106,7 @@
                 
                 #do final transpilation
                 $this->transpile();
-                echo "ChangeMap: \n";
-                print_r($this->changeMap);
+                
                 return $this->phpCode;
         }
 
@@ -120,7 +119,7 @@
                 if(empty($this->parent)) return;
                 $pns = $this->getNamespaceText($this->homeDir($this->parent));
                 $cns = $this->getNamespaceText($this->homeDir($this->qualifiedName));
-
+               
                 if ($pns == $cns) return;
                 $this->useNsString[] = "use " . $this->getNamespaceText($this->parent) . ";";
         }
@@ -130,6 +129,7 @@
          * @return void
          */
         protected function formatTraits(){
+                
                 $this->changeMap[ClassObject::UT] = $this->format($this->traits, function(&$list, &$output){
                         
                         $output = array_map(function($value){
@@ -160,6 +160,7 @@
          * @return array $resolved - a map containing [names => qualifiedNames]
          */
         protected function resolveCollision(array $names){
+
             $resolved = [];
             $tree = new NsBST();
             foreach($names as $n){
@@ -212,7 +213,7 @@
          * @return  self
          */ 
         public function setInterfaces(array $interfaces)
-        {
+        {       
                 $this->interfaces = $interfaces;
 
                 return $this;
