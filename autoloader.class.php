@@ -1,4 +1,7 @@
 <?php
+
+use Zas\ZasHelper;
+
     /**
      *  Autoloads classes, interfaces, and traits. It also automatically include the vendor autoloader if the folder is present.
      *  **requires that the zas-config.json be configured properly.**
@@ -120,7 +123,7 @@
             $ext = $this->extensions->constantsClass;
 
             $path = $this->getPath($constantsClassName, $ext, $aPath);
-
+          
             if(!file_exists($path)){
                 return false;
             }

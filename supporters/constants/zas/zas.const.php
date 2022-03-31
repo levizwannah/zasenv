@@ -21,6 +21,13 @@
                 Z_INFC = "interface",
                 Z_CONST = "const-class";
 
+        /**
+         * Dash constants 
+         */
+        const   DASH_I = "-i",
+                DASH_P = "-p",
+                DASH_T = "-t";
+                        
         private function __construct(){}
     }
 ?>

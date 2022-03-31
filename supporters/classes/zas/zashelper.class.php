@@ -130,7 +130,7 @@
             }
 
             # show list
-            $mainCommand = strtolower($argv[0]);
+            $mainCommand = strtolower($argv[1]);
 
             switch($mainCommand){
                 case ZasConstants::Z_MAKE:
@@ -138,6 +138,10 @@
                         $this->execMake($argc, $argv);
                         break;
                     }
+                default:
+                {
+                    ZasHelper::log("Didn't call any case");
+                }
             }
             
         }
@@ -151,16 +155,81 @@
          * @param int $argc
          * @param array $argv
          * 
-         * @return [type]
+         * @return void
          */
         private function execMake(int $argc, array $argv){
-            $container = strtolower($argv[2]);
-            $containerName = $argv[3];
+            $container = strtolower($argv[2] ?? "");
+            $containerName = $argv[3] ?? "";
 
             switch($container){
                 case ZasConstants::Z_CLASS:
                     {
+                        $interfaces = $traits = [];
+                        $parentClass = "";
+
+                        $isParent = $isTrait = $isInterface = false;
+                        $states = [&$isParent, &$isTrait, &$isInterface];
                         
+                        $setState = function(array &$states, int $index){
+                            foreach($states as  $i => &$state){
+                                   $state = false;
+                                   if($i == $index) $state = true; 
+                            }
+                        };
+
+                        for($i = 4; $i < $argc; $i++){
+                            
+                            $currentVal = $argv[$i];
+
+                            # check for -i, -p or -t
+                            switch($currentVal){
+                                case ZasConstants::DASH_P:
+                                    {
+                                        $setState($states, 0);
+                                        continue 2;
+                                    }
+                                case ZasConstants::DASH_T:
+                                    {
+                                        $setState($states, 1);
+                                        continue 2;
+                                    }
+                                case ZasConstants::DASH_I:
+                                    {
+                                        $setState($states, 2);
+                                        continue 2;
+                                    }
+                            }
+
+                            # set the parent class
+                            switch(true){
+                                case $isParent:
+                                    {
+                                        $parentClass = $argv[$i];
+                                        break;
+                                    }
+                                case $isTrait:
+                                    {
+                                        //@todo - check if trait exist
+                                        //if not create it
+
+                                        $traits[] = $argv[$i];
+
+                                        break;
+                                    }
+                                case $isInterface:
+                                    {
+                                        //@todo - check if interface exist
+                                        //if not create it
+                                        $interfaces[] = $argv[$i];
+                                        break;
+                                    }
+                            }
+                        }
+
+                        ZasHelper::log(
+                            $this->makeClass($containerName, $parentClass,$interfaces, $traits)
+                        );
+
                         break;
                     }
                 case ZasConstants::Z_INFC:
