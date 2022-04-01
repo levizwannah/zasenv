@@ -46,9 +46,10 @@
 
         /**
          * Creates a new file
+         * @return array [status=> bool, exists => bool, fullPath => fullPath]
          */
         public function createFile(string $fullPath){
-            if(file_exists($fullPath)) return $fullPath;
+            if(file_exists($fullPath)) return ["status" => true, "exists" => true, "fullPath" => $fullPath];
 
             $output = [];
             $resultCode = null;
@@ -69,9 +70,9 @@
 
             exec($cmd, $output, $resultCode);
 
-            if($resultCode == 0) return $fullPath;
+            if($resultCode == 0) return ["status" => true, "exists" => false, "fullPath" => $fullPath];
 
-            return false;
+            return ["status" => false, "exists" => false, "fullPath" => ""];
         }
 
         /**

@@ -7,7 +7,7 @@
      require("master.setup.php");
      use Zas\ZasHelper;
   
-     $zas = new ZasHelper();
+     $zas = new ZasHelper(); 
      $zas->process($argc, $argv);
      
 ?>

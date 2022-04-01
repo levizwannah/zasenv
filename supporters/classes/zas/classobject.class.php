@@ -1,6 +1,7 @@
 <?php
     namespace Zas;
 
+    #uns#
 
     /**
      * ClassTranspiler
@@ -8,16 +9,14 @@
      */
     class ClassObject extends Transpiler {
         
+        /**
+         * Constants to define what will be manipulated in the class.tpl
+         */
         const CN = "[CN]";
         const INHERITANCE = "<INHERITANCE>";
         const CONTRACTS = "<CONTRACTS>";
         const C_VISIBILITY = "[C-VISIBILITY]";
-        /**
-         * temPath
-         * The template path for the class.tpl
-         * @var string
-         */
-        public static $temPath;
+        
 
         /**
          * An array of interfaces implemented by the class
@@ -32,31 +31,18 @@
         protected $traits = [];
 
         /**
-         * The qualified name of the class
-         * @var string
-         */
-        protected $qualifiedName;
-
-        /**
          * The parent qualified class name
          * @var string
          */
         protected $parent;
 
-        /**
-         * Use Namsespace string - to be written at the 
-         * point where uns is.
-         * @var array
-         */
-        protected $useNsString = [];
+        # traits
+        #ut#
+
         /**
          * Makes a new classObject
          * @param array $changeMap The change map should contain the class name, and the namespace denoted by [CN] => className, [NS] => Zas\Server for example
          */
-
-        # traits
-        use NsUtilTrait; 
-
         public function __construct(array $changeMap)
         {
             parent::__construct($changeMap, ClassObject::$temPath);
@@ -76,10 +62,7 @@
          * @return string
          */
         public function makePhpCode(){
-                if(empty($this->qualifiedName)){
-                        echo "ClassObject::Error: No classname defined\n";
-                        return "";
-                }
+                if(!$this->canMakePhpCode()) return "";
 
                 #add parent to namespace
                 $this->addParentToNs();
@@ -101,8 +84,6 @@
                         $useNs = implode("\n    ", $this->useNsString) . "\n    ". ClassObject::UNS;
                         $this->changeMap[ClassObject::UNS] = $useNs;
                 }
-                
-
                 
                 #do final transpilation
                 $this->transpile();
@@ -151,52 +132,6 @@
             $this->changeMap[ClassObject::CONTRACTS] = $this->format($this->interfaces, function(&$list, &$output){
                     $output = "implements ". implode(", ", $list);
             });
-        }
-        
-        /**
-         * resolveCollision for namespaces used in class such as
-         *
-         * @param  array $names
-         * @return array $resolved - a map containing [names => qualifiedNames]
-         */
-        protected function resolveCollision(array $names){
-
-            $resolved = [];
-            $tree = new NsBST();
-            foreach($names as $n){
-                    $tree->insert($n);
-            }
-
-            $tree->getResolvedQNames($resolved);
-            return $resolved;
-        }
-
-        /**
-         * @param array $names
-         * @param Function $formatter (&$list, &$output)
-         * 
-         * @return array|string
-         */
-        protected function format(array $names, $formatter){
-            $all = $this->resolveCollision($names);
-            if(count($all) < 1){
-                    return "";
-            }
-
-            $list = [];
-            foreach($all as $name => $qualifiedName){
-                    $useStmt = "use $qualifiedName;";
-                    if($this->getName($qualifiedName) !== $name){
-                            # is alias
-                            $useStmt = "use $qualifiedName as $name;";
-                    }
-                    $this->useNsString[] = $useStmt;
-                    $list[] = $name;
-
-            }
-            $output = "";
-            $formatter($list, $output);
-            return $output;
         }
 
         /**
@@ -255,54 +190,6 @@
         public function setParent($parent)
         {
                 $this->parent = $parent;
-
-                return $this;
-        }
-
-        /**
-         * Get the qualified name of the class
-         *
-         * @return  string
-         */ 
-        public function getQualifiedName()
-        {
-                return $this->qualifiedName;
-        }
-
-        /**
-         * Set the qualified name of the class
-         *
-         * @param  string  $qualifiedName  The qualified name of the class
-         *
-         * @return  self
-         */ 
-        public function setQualifiedName(string $qualifiedName)
-        {
-                $this->qualifiedName = $qualifiedName;
-
-                return $this;
-        }
-
-        /**
-         * Get point where uns is.
-         *
-         * @return  array
-         */ 
-        public function getUseNsString()
-        {
-                return $this->useNsString;
-        }
-
-        /**
-         * Set point where uns is.
-         *
-         * @param  array  $useNsString  point where uns is.
-         *
-         * @return  self
-         */ 
-        public function setUseNsString(array $useNsString)
-        {
-                $this->useNsString = $useNsString;
 
                 return $this;
         }

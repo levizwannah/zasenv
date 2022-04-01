@@ -54,29 +54,55 @@
         }
         
         /**
+         * Makes a file regardless of its directory
+         * @param string $qualifiedName - full name of the container include its namespace
+         * @param string $zasPathStr - path as in Zas config. use one of `ZasConstants::ZCFG_*`
+         * @param string $zasExtStr - extension as in Zas config. use one of `ZasConstants::ZCFG_*`
+         * 
+         * @return array `[exists => bool, actualName=>"acutalName", namespace => "namespace", homeDir => "homeDir", filePath => "filePath"]`
+         */
+        private function makeFile(string $qualifiedName, string $zasPathStr, string $zasExtStr){
+            $namespace = $this->getNamespaceText($this->homeDir($qualifiedName));
+
+            $homeDir = strtolower($namespace);
+
+            # get the class name
+            $actualName = $this->capitalizeWords($this->getName($qualifiedName));
+
+
+            $homeDir = $this->getFullPath($this->zasConfig->path->$zasPathStr) . DIRECTORY_SEPARATOR. $homeDir;
+            $core = new System();
+            $core->makeDirectory($homeDir);
+            
+            $filePath = (object)$core->createFile($homeDir.DIRECTORY_SEPARATOR. strtolower($actualName). ".". $this->zasConfig->extensions->$zasExtStr);
+            if(!$filePath->status) ZasHelper::log("System::Error::Could not create file");
+
+            return [
+                "exists" => $filePath->exists,
+                "actualName" => $actualName,
+                "namespace" => $namespace,
+                "homeDir" => $homeDir,
+                "filePath" => $filePath->fullPath
+            ];
+        }
+
+        /**
          * Creates a class following the ZAS and the conventions specified in the zas-config file
          * @param string $className - qualified class name
          * @param string $parentClassName - qualified parent class name
          * @param array $impInterfaces - qualified interfaces names
          * @param array $useTraits - qualified traits names
          * 
-         * @return string $fileName;
+         * @return array [actualName => "actualName", filePath => "filePath"]
          */
-        public function makeClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = []){
-            $namespace = $this->getNamespaceText($this->homeDir($className));
+        public function makeClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = [], $force = false){
 
-            $homeDir = strtolower($namespace);
+            $madeFile = (object)$this->makeFile($className, ZasConstants::ZCFG_CLASS, ZasConstants::ZCFG_CLASS);
+            $namespace = $madeFile->namespace;
+            $homeDir = $madeFile->homeDir;
+            $actualName = $madeFile->actualName;
+            $filePath = $madeFile->filePath;
 
-            # get the class name
-            $actualName = $this->capitalizeWords($this->getName($className));
-
-
-            $homeDir = $this->getFullPath($this->zasConfig->path->class) . DIRECTORY_SEPARATOR. $homeDir;
-            $core = new System();
-            $core->makeDirectory($homeDir);
-            
-            $fileName = $core->createFile($homeDir.DIRECTORY_SEPARATOR. strtolower($actualName). ".". $this->zasConfig->extensions->class);
-            
             ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->class);
             //echo "Template path: ", ClassObject::$temPath, "\n";
 
@@ -86,24 +112,67 @@
             ]);
 
             # set properties
-            $classObj->setQualifiedName($className);
+            $classObj->setQualifiedName($namespace ."\\".$actualName);
             $classObj->setParent($parentClassName);
             $classObj->setTraits($useTraits);
             $classObj->setInterfaces($impInterfaces);
 
-            file_put_contents($fileName, $classObj->makePhpCode());
-            return $fileName;
+            # check if file exist and if we want to overwrite it.
+            if($madeFile->exists)   ZasHelper::log("Interface already exists. Use --f in your command to overwrite it.");
+
+            if(($force && $madeFile->exists) || !$madeFile->exists){
+                file_put_contents($filePath, $classObj->makePhpCode());
+            }
+
+
+            return [
+                "actualName" => $classObj->getQualifiedName(),
+                "filePath" => $filePath
+            ];
         }
 
         /**
          * @param mixed $interfaceName
          * @param array $extendsInterfaces
          * 
-         * @return string
+         * @return array [actualName => "actualName", filePath => "filePath"]
          */
-        private function makeInterface(string $interfaceName, array $extendsInterfaces){
+        private function makeInterface(string $interfaceName, array $extendsInterfaces = [], $force = false){
+            $madeFile = (object)$this->makeFile($interfaceName, ZasConstants::ZCFG_IFC, ZasConstants::ZCFG_IFC);
+            $namespace = $madeFile->namespace;
+            $homeDir = $madeFile->homeDir;
+            $actualName = $madeFile->actualName;
+            $filePath = $madeFile->filePath;
 
-            return "";
+            IfcObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->interface);
+            
+            # update the name
+            $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->interface);
+            $regex = preg_replace("/\W/", "", $regex);
+            $actualName .= $regex;
+
+            $ifcObj = new IfcObject([
+                IfcObject::IN => $actualName,
+                IfcObject::NS => preg_replace("/^\W/", "", $namespace)
+            ]);
+
+            # set properties
+            $ifcObj->setQualifiedName($namespace ."\\".$actualName);
+            $ifcObj->setInterfaces($extendsInterfaces);
+
+            # check if file exist and if we want to overwrite it.
+            if($madeFile->exists)   ZasHelper::log("Interface already exists. Use --f in your command to overwrite it.");
+
+            if(($force && $madeFile->exists) || !$madeFile->exists){
+                file_put_contents($filePath, $ifcObj->makePhpCode());
+            }
+
+            
+            return [
+                "actualName" => $ifcObj->getQualifiedName(),
+                "filePath" => $filePath
+            ];
+                
         }
 
 
@@ -133,7 +202,7 @@
             $mainCommand = strtolower($argv[1]);
 
             switch($mainCommand){
-                case ZasConstants::Z_MAKE:
+                case ZasConstants::ZC_MAKE:
                     {
                         $this->execMake($argc, $argv);
                         break;
@@ -160,9 +229,17 @@
         private function execMake(int $argc, array $argv){
             $container = strtolower($argv[2] ?? "");
             $containerName = $argv[3] ?? "";
-
+            $force = false;
+            $forceIndex = array_search(ZasConstants::DASH_DASH_F, $argv);
+            if($forceIndex !== false) {
+                $force = true;
+                unset($argv[$forceIndex]);
+                $argv = array_values($argv);
+                $argc = count($argv);
+            }
+            
             switch($container){
-                case ZasConstants::Z_CLASS:
+                case ZasConstants::ZC_CLASS:
                     {
                         $interfaces = $traits = [];
                         $parentClass = "";
@@ -204,7 +281,9 @@
                             switch(true){
                                 case $isParent:
                                     {
-                                        $parentClass = $argv[$i];
+                                        $parent = (object)$this->makeClass($currentVal);
+
+                                        $parentClass = $parent->actualName;
                                         break;
                                     }
                                 case $isTrait:
@@ -212,39 +291,67 @@
                                         //@todo - check if trait exist
                                         //if not create it
 
-                                        $traits[] = $argv[$i];
+                                        $traits[] = $currentVal;
 
                                         break;
                                     }
                                 case $isInterface:
                                     {
-                                        //@todo - check if interface exist
-                                        //if not create it
-                                        $interfaces[] = $argv[$i];
+                                        $interface = (object) $this->makeInterface($currentVal);
+                                        $interfaces[] = $interface->actualName;
                                         break;
                                     }
                             }
                         }
 
                         ZasHelper::log(
-                            $this->makeClass($containerName, $parentClass,$interfaces, $traits)
+                            ((object)$this->makeClass($containerName, $parentClass,$interfaces, $traits, $force))->actualName
                         );
 
                         break;
                     }
-                case ZasConstants::Z_INFC:
+                case ZasConstants::ZC_INFC:
+                    {
+                        $interfaces = [];
+                        $isIntList = false;
+                        for($i = 4; $i < $argc; $i++){
+                            
+                            $currentVal = $argv[$i];
+
+                            switch($currentVal){
+                                case ZasConstants::DASH_E:
+                                    {
+                                        $isIntList = true;
+                                        continue 2;
+                                    }
+                            }
+
+                            switch(true){
+                                case $isIntList:
+                                    {
+                                        # make every interface seen
+                                        $interface = (object)$this->makeInterface($currentVal);
+                                        $interfaces[] = $interface->actualName;
+                                        break;
+                                    }
+                            }
+                        }
+
+                        ZasHelper::log(
+                            ((object)$this->makeInterface($containerName, $interfaces, $force))->actualName
+                        );
+
+                        break;
+                    }
+                case ZasConstants::ZC_TRAIT:
                     {
                         break;
                     }
-                case ZasConstants::Z_TRAIT:
+                case ZasConstants::ZC_CONST:
                     {
                         break;
                     }
-                case ZasConstants::Z_CONST:
-                    {
-                        break;
-                    }
-                case ZasConstants::Z_ABCLASS:
+                case ZasConstants::ZC_ABCLASS:
                     {
                         break;
                     }
