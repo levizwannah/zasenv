@@ -1,7 +1,7 @@
 {
     "name": "levizwannah/zasenv",
     "type": "project",
-    "keywords": ["ZASS", "ASA", "Zwannah API Structure Specification", "Actors-Supporters Arrangement", "API setup"],
+    "keywords": ["ZASS", "ZAS", "ASA", "Zwannah API Structure Specification", "Actors-Supporters Arrangement", "API setup"],
     "description": "Set up the folders/directories of the API/Backend following the ZAS specification",
     "license": "MIT",
     "prefer-stable": true,
