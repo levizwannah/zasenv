@@ -6,7 +6,7 @@
     #uns#
 
 
-    class IfcObject extends Transpiler  {
+    class IfcObject extends Transpiler implements CodeMakerInterface {
 
         /**
          * Constants defining what should be manipulated in the interface.tpl
@@ -18,14 +18,14 @@
          * An array of interfaces implemented by the interface
          * @var array
          */
-        protected $interfaces = [];
+        private $interfaces = [];
 
         # use traits
         use NsUtilTrait;
         #ut#
 
         /**
-         * Makes a new InfOjbect - Interface Object
+         * Makes a new IfcOjbect - Interface Object
          * @param array $changeMap The change map should contain the interface name, and the namespace denoted by [IN] => InterfaceName, [NS] => Zas\Server for example
          */
         public function __construct(array $changeMap){
@@ -35,7 +35,7 @@
         }
 
          /**
-         * Converts the template text in class.tpl to a php code.
+         * Converts the template text in interface.tpl to a php code.
          * @return string
          */
         public function makePhpCode(){
@@ -46,8 +46,8 @@
 
             #namespace usage
             if(!empty($this->useNsString)){
-                    $useNs = implode("\n    ", $this->useNsString) . "\n    ". ClassObject::UNS;
-                    $this->changeMap[ClassObject::UNS] = $useNs;
+                    $useNs = implode("\n    ", $this->useNsString) . "\n    ". IfcObject::UNS;
+                    $this->changeMap[IfcObject::UNS] = $useNs;
             }
             
             #do final transpilation

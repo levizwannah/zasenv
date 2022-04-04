@@ -7,7 +7,7 @@
      * ClassTranspiler
      * Transpiles the code in class.tpl to php code
      */
-    class ClassObject extends Transpiler {
+    class ClassObject extends Transpiler implements CodeMakerInterface {
         
         /**
          * Constants to define what will be manipulated in the class.tpl

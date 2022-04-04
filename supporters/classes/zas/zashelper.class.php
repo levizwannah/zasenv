@@ -53,6 +53,43 @@
             return $this->rootDir . $path;
         }
         
+
+        /**
+         * Removes the regex from a name.
+         * for example, if the user supply xTrait when creating a trait, Trait will be removed and X will be left.
+         * @param string $name
+         * @param mixed $regex
+         * @param int $regexPosition
+         * 
+         * @return string
+         */
+        private function cleanName(string $name, $regex, int $regexPosition){
+            # update the name
+            $regex = preg_replace("/\\\w{1}/", "", $regex);
+            $regex = preg_replace("/\W/", "", $regex);
+
+            #remove trait from the traitName incase it is there.
+            $flUpper = strtoupper($regex[0]);
+            $flLower = strtolower($regex[0]);
+            $remainingLetters = substr($regex, 1);
+        
+            switch($regexPosition){
+                case ZasConstants::R_START:
+                    {
+                        return preg_replace("/^[$flUpper$flLower]$remainingLetters/", "", $name);
+                    }
+                case ZasConstants::R_END:
+                    {
+                        return preg_replace("/[$flUpper$flLower]$remainingLetters$/", "", $name);
+                    }
+                case ZasConstants::R_ANYWHERE:
+                    {
+                        return preg_replace("/[$flUpper$flLower]$remainingLetters/", "", $name);
+                    }
+            }
+            
+        }
+
         /**
          * Makes a file regardless of its directory
          * @param string $qualifiedName - full name of the container include its namespace
@@ -95,7 +132,7 @@
          * 
          * @return array [actualName => "actualName", filePath => "filePath"]
          */
-        public function makeClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = [], $force = false){
+        public function makeClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = [], bool $force = false){
 
             $madeFile = (object)$this->makeFile($className, ZasConstants::ZCFG_CLASS, ZasConstants::ZCFG_CLASS);
             $namespace = $madeFile->namespace;
@@ -134,10 +171,19 @@
         /**
          * @param mixed $interfaceName
          * @param array $extendsInterfaces
+         * @param bool $force - should we overwrite the file if it exists?
          * 
          * @return array [actualName => "actualName", filePath => "filePath"]
          */
-        private function makeInterface(string $interfaceName, array $extendsInterfaces = [], $force = false){
+        private function makeInterface(string $interfaceName, array $extendsInterfaces = [], bool $force = false){
+
+            # update the name
+            $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->interface);
+            $regex = preg_replace("/\W/", "", $regex);
+
+            # remove trait from the traitName incase it is there.
+            $interfaceName = $this->cleanName($interfaceName, $regex, ZasConstants::R_END);
+
             $madeFile = (object)$this->makeFile($interfaceName, ZasConstants::ZCFG_IFC, ZasConstants::ZCFG_IFC);
             $namespace = $madeFile->namespace;
             $homeDir = $madeFile->homeDir;
@@ -147,8 +193,6 @@
             IfcObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->interface);
             
             # update the name
-            $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->interface);
-            $regex = preg_replace("/\W/", "", $regex);
             $actualName .= $regex;
 
             $ifcObj = new IfcObject([
@@ -173,6 +217,55 @@
                 "filePath" => $filePath
             ];
                 
+        }
+
+        /**
+         * @param string $traitName
+         * @param array $useTraits
+         * @param bool $force - should we overwrite the file if it exists?
+         * 
+         * @return array [actualName => "actualName", filePath => "filePath"]
+         */
+        public function makeTrait(string $traitName, array $useTraits = [], bool $force = false){
+            # update the name
+            $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->trait);
+            $regex = preg_replace("/\W/", "", $regex);
+
+            # remove trait from the traitName incase it is there.
+            $traitName = $this->cleanName($traitName, $regex, ZasConstants::R_END);
+            
+            $madeFile = (object)$this->makeFile($traitName, ZasConstants::ZCFG_TRAIT, ZasConstants::ZCFG_TRAIT);
+            $namespace = $madeFile->namespace;
+            $homeDir = $madeFile->homeDir;
+            $actualName = $madeFile->actualName;
+            $filePath = $madeFile->filePath;
+
+            TraitObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->trait);
+            
+            #append trait to the name
+            $actualName .= $regex;
+
+            $traitObj = new TraitObject([
+                TraitObject::TN => $actualName,
+                TraitObject::NS => preg_replace("/^\W/", "", $namespace)
+            ]);
+
+            # set properties
+            $traitObj->setQualifiedName($namespace ."\\".$actualName);
+            $traitObj->setTraits($useTraits);
+
+            # check if file exist and if we want to overwrite it.
+            if($madeFile->exists)   ZasHelper::log("Trait already exists. Use --f in your command to overwrite it.");
+
+            if(($force && $madeFile->exists) || !$madeFile->exists){
+                file_put_contents($filePath, $traitObj->makePhpCode());
+            }
+
+            
+            return [
+                "actualName" => $traitObj->getQualifiedName(),
+                "filePath" => $filePath
+            ];
         }
 
 
@@ -282,16 +375,13 @@
                                 case $isParent:
                                     {
                                         $parent = (object)$this->makeClass($currentVal);
-
                                         $parentClass = $parent->actualName;
                                         break;
                                     }
                                 case $isTrait:
                                     {
-                                        //@todo - check if trait exist
-                                        //if not create it
-
-                                        $traits[] = $currentVal;
+                                        $trait = (object)$this->makeTrait($currentVal);
+                                        $traits[] = $trait->actualName;
 
                                         break;
                                     }
@@ -345,6 +435,35 @@
                     }
                 case ZasConstants::ZC_TRAIT:
                     {
+                        $traits = [];
+                        $isTraitList = false;
+                        for($i = 4; $i < $argc; $i++){
+                            
+                            $currentVal = $argv[$i];
+
+                            switch($currentVal){
+                                case ZasConstants::DASH_T:
+                                    {
+                                        $isTraitList = true;
+                                        continue 2;
+                                    }
+                            }
+
+                            switch(true){
+                                case $isTraitList:
+                                    {
+                                        # make every trait found
+                                        $trait = (object)$this->makeTrait($currentVal);
+                                        $traits[] = $trait->actualName;
+                                        break;
+                                    }
+                            }
+                        }
+
+                        ZasHelper::log(
+                            ((object)$this->makeTrait($containerName, $traits, $force))->actualName
+                        );
+
                         break;
                     }
                 case ZasConstants::ZC_CONST:

@@ -39,6 +39,13 @@
                 ZCFG_TRAIT = "trait",
                 ZCFG_CONST = "constantsClass";
 
+        /**
+         * Constants for regex
+         */
+        const   R_START = 0,
+                R_END = 1,
+                R_ANYWHERE = 2;
+
         private function __construct(){}
     }
 ?>
