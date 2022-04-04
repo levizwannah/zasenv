@@ -8,5 +8,5 @@
     ],
     "license": "MIT",
     "prefer-stable": true,
-    "minimum-stability": "dev"
+    "minimum-stability": "stable"
 }
