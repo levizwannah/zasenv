@@ -144,6 +144,8 @@
 
             ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->class);
             //echo "Template path: ", ClassObject::$temPath, "\n";
+            ZasHelper::log("Making class: $className");
+
 
             $classObj = new ClassObject([
                 ClassObject::CN => $actualName,
@@ -193,9 +195,10 @@
             $filePath = $madeFile->filePath;
 
             ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->constantsClass);
-            
+
             # update the name
             $actualName .= $regex;
+            ZasHelper::log("Making Constants Class: $className");
 
             $classObj = new ClassObject([
                 ClassObject::CN => $actualName,
@@ -246,7 +249,7 @@
             $filePath = $madeFile->filePath;
 
             ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->abstractClass);
-            
+            ZasHelper::log("Making Abstract Class: $className");
             # update the name
             $actualName = $regex . $actualName;
 
@@ -298,7 +301,8 @@
             $filePath = $madeFile->filePath;
 
             IfcObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->interface);
-            
+            ZasHelper::log("Making Interface: $interfaceName");
+
             # update the name
             $actualName .= $regex;
 
@@ -348,7 +352,7 @@
             $filePath = $madeFile->filePath;
 
             TraitObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->trait);
-            
+            ZasHelper::log("Making Trait: $traitName");
             #append trait to the name
             $actualName .= $regex;
 

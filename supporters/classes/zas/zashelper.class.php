@@ -42,6 +42,21 @@
             $this->zasConfig = json_decode($config);
         }
 
+        /**
+         * Update root path in the zas-config.json
+         */
+        private function updateRootPath(){
+            $curRoot = getcwd();
+            $root = preg_split("/[\\".DIRECTORY_SEPARATOR."\/]/", $curRoot);
+            $rIndex = array_key_last($root);
+            $finalRoot = $root[$rIndex];
+            $fileContent = file_get_contents(self::$configPath);
+            $str = preg_replace("/[\"']root[\"']:\s*[\"']\w*[\"'],/", "\"root\": \"$finalRoot\",", $fileContent);
+            
+            file_put_contents(self::$configPath, $str);
+
+            ZasHelper::log("updated root path to: $finalRoot");
+        }
         
 
         /**
@@ -73,6 +88,11 @@
                 case ZasConstants::ZC_MAKE:
                     {
                         $this->execMake($argc, $argv);
+                        break;
+                    }
+                case ZasConstants::ZC_UPD_ROOT:
+                    {
+                        $this->updateRootPath();
                         break;
                     }
                 default:

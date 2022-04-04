@@ -140,7 +140,7 @@ use Zas\ZasHelper;
         public function load($name){
             #check the name to know whether we are loading a class, interface, trait, or abstract class.
             #name include namespace to it.
-            echo "loading: $name\n";
+            # echo "loading: $name\n";
             $splittedNames = preg_split("/\W/", $name);
             $size = count($splittedNames);
 
@@ -188,7 +188,7 @@ use Zas\ZasHelper;
             }   
 
             spl_autoload_register([$this, "load"]);
-            echo "Autoloading...\n";
+            # echo "Autoloading...\n";
         }
     }
 

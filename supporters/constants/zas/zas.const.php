@@ -19,7 +19,8 @@
                 ZC_TRAIT = "trait",
                 ZC_ABCLASS = "ab-class",
                 ZC_INFC = "interface",
-                ZC_CONST = "class-const";
+                ZC_CONST = "class-const",
+                ZC_UPD_ROOT = "update-root-path";
 
         /**
          * Dash constants 
