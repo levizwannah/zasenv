@@ -4,7 +4,7 @@ Zas Commands:
                         ab-class - for abstract class, 
                         trait - for trait, 
                         interface - for interface, 
-                        const-class - for constants class
+                        class-const - for constants class (A class that houses constants only)
 
       ii. [name]: name for the container.
                   don't include the container 

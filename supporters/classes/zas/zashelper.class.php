@@ -273,6 +273,70 @@
                     }
                 case ZasConstants::ZC_ABCLASS:
                     {
+                        $interfaces = $traits = [];
+                        $parentClass = "";
+
+                        $isParent = $isTrait = $isInterface = false;
+                        $states = [&$isParent, &$isTrait, &$isInterface];
+                        
+                        $setState = function(array &$states, int $index){
+                            foreach($states as  $i => &$state){
+                                   $state = false;
+                                   if($i == $index) $state = true; 
+                            }
+                        };
+
+                        for($i = 4; $i < $argc; $i++){
+                            
+                            $currentVal = $argv[$i];
+
+                            # check for -i, -p or -t
+                            switch($currentVal){
+                                case ZasConstants::DASH_P:
+                                    {
+                                        $setState($states, 0);
+                                        continue 2;
+                                    }
+                                case ZasConstants::DASH_T:
+                                    {
+                                        $setState($states, 1);
+                                        continue 2;
+                                    }
+                                case ZasConstants::DASH_I:
+                                    {
+                                        $setState($states, 2);
+                                        continue 2;
+                                    }
+                            }
+
+                            # set the parent class
+                            switch(true){
+                                case $isParent:
+                                    {
+                                        $parent = (object)$maker->makeAbstractClass($currentVal);
+                                        $parentClass = $parent->actualName;
+                                        break;
+                                    }
+                                case $isTrait:
+                                    {
+                                        $trait = (object)$maker->makeTrait($currentVal);
+                                        $traits[] = $trait->actualName;
+
+                                        break;
+                                    }
+                                case $isInterface:
+                                    {
+                                        $interface = (object) $maker->makeInterface($currentVal);
+                                        $interfaces[] = $interface->actualName;
+                                        break;
+                                    }
+                            }
+                        }
+
+                        ZasHelper::log(
+                            ((object)$maker->makeAbstractClass($containerName, $parentClass,$interfaces, $traits, $force))->actualName
+                        );
+
                         break;
                     }
                 default:

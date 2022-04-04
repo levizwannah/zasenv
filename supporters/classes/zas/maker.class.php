@@ -71,19 +71,22 @@
             $flUpper = strtoupper($regex[0]);
             $flLower = strtolower($regex[0]);
             $remainingLetters = substr($regex, 1);
-        
+
+            $namespace = $this->getNamespaceText($this->homeDir($name));
+            $actualName = $this->capitalizeWords($this->getName($name));
+
             switch($regexPosition){
                 case ZasConstants::R_START:
                     {
-                        return preg_replace("/^[$flUpper$flLower]$remainingLetters/", "", $name);
+                        return "$namespace\\".preg_replace("/^[$flUpper$flLower]$remainingLetters/", "", $actualName);
                     }
                 case ZasConstants::R_END:
                     {
-                        return preg_replace("/[$flUpper$flLower]$remainingLetters$/", "", $name);
+                        return "$namespace\\".preg_replace("/[$flUpper$flLower]$remainingLetters$/", "", $actualName);
                     }
                 case ZasConstants::R_ANYWHERE:
                     {
-                        return preg_replace("/[$flUpper$flLower]$remainingLetters/", "", $name);
+                        return "$namespace\\".preg_replace("/[$flUpper$flLower]$remainingLetters/", "", $actualName);
                     }
             }
             
@@ -154,7 +157,7 @@
             $classObj->setInterfaces($impInterfaces);
 
             # check if file exist and if we want to overwrite it.
-            if($madeFile->exists)   ZasHelper::log("Class already already exists. Use --f in your command to overwrite it.");
+            if($madeFile->exists)   ZasHelper::log("$actualName Class already already exists. Use --f in your command to overwrite it.");
 
             if(($force && $madeFile->exists) || !$madeFile->exists){
                 file_put_contents($filePath, $classObj->makePhpCode());
@@ -203,9 +206,63 @@
             # set properties
             $classObj->setQualifiedName($namespace ."\\".$actualName);
             $classObj->setParent($parentClassName);
+            
+            # check if file exist and if we want to overwrite it.
+            if($madeFile->exists)   ZasHelper::log("$actualName Constants class already exists. Use --f in your command to overwrite it.");
+
+            if(($force && $madeFile->exists) || !$madeFile->exists){
+                file_put_contents($filePath, $classObj->makePhpCode());
+            }
+
+
+            return [
+                "actualName" => $classObj->getQualifiedName(),
+                "filePath" => $filePath
+            ];
+        }
+
+        /**
+         * Creates an Abstract class following the ZAS and the conventions specified in the zas-config file
+         * @param string $className - qualified class name
+         * @param string $parentClassName - qualified parent class name
+         * @param array $impInterfaces - qualified interfaces names
+         * @param array $useTraits - qualified traits names
+         *  
+         * @return array [actualName => "actualName", filePath => "filePath"]
+         */
+        public function makeAbstractClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = [], bool $force = false){
+            # update the name
+            $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->abstractClass);
+            $regex = preg_replace("/\W/", "", $regex);
+
+            # remove trait from the traitName incase it is there.
+            $className = $this->cleanName($className, $regex, ZasConstants::R_START);
+
+
+            $madeFile = (object)$this->makeFile($className, ZasConstants::ZCFG_ACLASS, ZasConstants::ZCFG_ACLASS);
+            $namespace = $madeFile->namespace;
+            $homeDir = $madeFile->homeDir;
+            $actualName = $madeFile->actualName;
+            $filePath = $madeFile->filePath;
+
+            ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->abstractClass);
+            
+            # update the name
+            $actualName = $regex . $actualName;
+
+            $classObj = new ClassObject([
+                ClassObject::CN => $actualName,
+                ClassObject::NS => preg_replace("/^\W/", "", $namespace),
+            ]);
+
+            # set properties
+            $classObj->setQualifiedName($namespace ."\\".$actualName);
+            $classObj->setParent($parentClassName);
+            $classObj->setTraits($useTraits);
+            $classObj->setInterfaces($impInterfaces);
 
             # check if file exist and if we want to overwrite it.
-            if($madeFile->exists)   ZasHelper::log("Constant class already exists. Use --f in your command to overwrite it.");
+            if($madeFile->exists)   ZasHelper::log("$actualName abstract class already exists. Use --f in your command to overwrite it.");
 
             if(($force && $madeFile->exists) || !$madeFile->exists){
                 file_put_contents($filePath, $classObj->makePhpCode());
@@ -255,7 +312,7 @@
             $ifcObj->setInterfaces($extendsInterfaces);
 
             # check if file exist and if we want to overwrite it.
-            if($madeFile->exists)   ZasHelper::log("Interface already exists. Use --f in your command to overwrite it.");
+            if($madeFile->exists)   ZasHelper::log("$actualName Interface already exists. Use --f in your command to overwrite it.");
 
             if(($force && $madeFile->exists) || !$madeFile->exists){
                 file_put_contents($filePath, $ifcObj->makePhpCode());
@@ -305,7 +362,7 @@
             $traitObj->setTraits($useTraits);
 
             # check if file exist and if we want to overwrite it.
-            if($madeFile->exists)   ZasHelper::log("Trait already exists. Use --f in your command to overwrite it.");
+            if($madeFile->exists)   ZasHelper::log("$actualName Trait already exists. Use --f in your command to overwrite it.");
 
             if(($force && $madeFile->exists) || !$madeFile->exists){
                 file_put_contents($filePath, $traitObj->makePhpCode());
