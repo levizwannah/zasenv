@@ -7,7 +7,11 @@
 
 
     interface CodeMakerInterface {
-        
+        /**
+         * Returns a usable php code for whatsoever function it was intended.
+         * @return [type]
+         */
+        public function makePhpCode();
     }
 
 ?>
