@@ -21,11 +21,11 @@
     },
 
     "templatePath": {
-        "class": "/dev/templates/class.tpl",
-        "abstractClass": "/dev/templates/aclass.tpl",
-        "interface": "/dev/templates/interface.tpl",
-        "trait": "/dev/templates/trait.tpl",
-        "constantsClass": "/dev/templates/const.tpl"
+        "class": "/supporters/templates/class.tpl",
+        "abstractClass": "/supporters/templates/aclass.tpl",
+        "interface": "/supporters/templates/interface.tpl",
+        "trait": "/supporters/templates/trait.tpl",
+        "constantsClass": "/supporters/templates/const.tpl"
     },
 
     "path": {
