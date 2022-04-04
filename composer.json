@@ -3,9 +3,6 @@
     "type": "project",
     "keywords": ["ZASS", "ASA", "Zwannah API Structure Specification", "Actors-Supporters Arrangement", "API setup"],
     "description": "Set up the folders/directories of the API/Backend following the ZAS specification",
-    "post-install-cmd": [
-        "php zas update-root-path"
-    ],
     "license": "MIT",
     "prefer-stable": true,
     "minimum-stability": "dev"
