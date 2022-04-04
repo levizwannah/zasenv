@@ -245,6 +245,30 @@
                     }
                 case ZasConstants::ZC_CONST:
                     {
+                        $parentClass = "";
+                        $isParent = false;
+                        for($i = 4; $i < $argc; $i++){
+                            
+                            $currentVal = $argv[$i];
+
+                            switch($currentVal){
+                                case ZasConstants::DASH_P:
+                                    {
+                                        $isParent = true;
+                                        continue 2;
+                                    }
+                            }
+
+                            if($isParent){
+                                $parent = (object)$maker->makeConstClass($currentVal);
+                                $parentClass = $parent->actualName;
+                            }
+                        }
+
+                        ZasHelper::log(
+                            ((object)$maker->makeConstClass($containerName, $parentClass, $force))->actualName
+                        );
+
                         break;
                     }
                 case ZasConstants::ZC_ABCLASS:

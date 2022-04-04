@@ -154,7 +154,58 @@
             $classObj->setInterfaces($impInterfaces);
 
             # check if file exist and if we want to overwrite it.
-            if($madeFile->exists)   ZasHelper::log("Interface already exists. Use --f in your command to overwrite it.");
+            if($madeFile->exists)   ZasHelper::log("Class already already exists. Use --f in your command to overwrite it.");
+
+            if(($force && $madeFile->exists) || !$madeFile->exists){
+                file_put_contents($filePath, $classObj->makePhpCode());
+            }
+
+
+            return [
+                "actualName" => $classObj->getQualifiedName(),
+                "filePath" => $filePath
+            ];
+        }
+
+        /**
+         * Creates a constatns class following the ZAS and the conventions specified in the zas-config file
+         * @param string $className - qualified class name
+         * @param string $parentClassName - qualified parent class name
+         * 
+         * @return array [actualName => "actualName", filePath => "filePath"]
+         */
+        public function makeConstClass(string $className, string $parentClassName = "", bool $force = false){
+            # update the name
+            $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->constantsClass);
+            $regex = preg_replace("/\W/", "", $regex);
+
+            # remove trait from the traitName incase it is there.
+            $className = $this->cleanName($className, $regex, ZasConstants::R_END);
+
+
+            $madeFile = (object)$this->makeFile($className, ZasConstants::ZCFG_CONST, ZasConstants::ZCFG_CONST);
+            $namespace = $madeFile->namespace;
+            $homeDir = $madeFile->homeDir;
+            $actualName = $madeFile->actualName;
+            $filePath = $madeFile->filePath;
+
+            ClassObject::$temPath = $this->getFullPath($this->zasConfig->templatePath->constantsClass);
+            
+            # update the name
+            $actualName .= $regex;
+
+            $classObj = new ClassObject([
+                ClassObject::CN => $actualName,
+                ClassObject::NS => preg_replace("/^\W/", "", $namespace),
+                ClassObject::C_VISIBILITY => "private"
+            ]);
+
+            # set properties
+            $classObj->setQualifiedName($namespace ."\\".$actualName);
+            $classObj->setParent($parentClassName);
+
+            # check if file exist and if we want to overwrite it.
+            if($madeFile->exists)   ZasHelper::log("Constant class already exists. Use --f in your command to overwrite it.");
 
             if(($force && $madeFile->exists) || !$madeFile->exists){
                 file_put_contents($filePath, $classObj->makePhpCode());

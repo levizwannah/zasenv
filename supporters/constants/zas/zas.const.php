@@ -19,7 +19,7 @@
                 ZC_TRAIT = "trait",
                 ZC_ABCLASS = "ab-class",
                 ZC_INFC = "interface",
-                ZC_CONST = "const-class";
+                ZC_CONST = "class-const";
 
         /**
          * Dash constants 

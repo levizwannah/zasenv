@@ -5,14 +5,14 @@
 
     #uns#
 
-    class [CN] <INHERITANCE> <CONTRACTS> {
+    class [CN] <INHERITANCE>{
 
-        # use traits
-        #ut#
+        # const ...
 
-        [C-VISIBILITY] function __construct(){
-            #code...
-        }
+        /** 
+         * Constructor kept private so that no instance of this class can be created.
+         */
+        [C-VISIBILITY] function __construct(){}
     }
 
 ?>
