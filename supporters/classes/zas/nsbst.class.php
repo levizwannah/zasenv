@@ -98,7 +98,7 @@
 
         } 
 
-        public function _inorder(Node|null $node, &$container) {
+        public function _inorder($node, &$container) {
 
                         if(!empty($node->left)) {
                            $this->_inorder($node->left, $container); 
@@ -114,7 +114,7 @@
         }
 
 
-        public function _preorder(Node|null $node, &$container) {
+        public function _preorder($node, &$container) {
 
                         if($node){
                            $node->putQUsageName($container);
@@ -132,7 +132,7 @@
         }
 
 
-        public function _postorder(Node|null $node, &$container) {
+        public function _postorder($node, &$container) {
 
 
                         if(!empty($node->left)) {
