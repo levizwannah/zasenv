@@ -131,6 +131,8 @@
             switch($container){
                 case ZasConstants::ZC_CLASS:
                     {
+                        $functionsToImpl = [];
+
                         $interfaces = $traits = [];
                         $parentClass = "";
 
@@ -171,8 +173,10 @@
                             switch(true){
                                 case $isParent:
                                     {
-                                        $parent = (object)$maker->makeClass($currentVal);
+                                        $parent = (object)$maker->makeSpecifiedClass($currentVal);
                                         $parentClass = $parent->actualName;
+                                        array_merge($functionsToImpl, $maker->getFuncToImplement($parent->filePath));
+
                                         break;
                                     }
                                 case $isTrait:
@@ -186,13 +190,16 @@
                                     {
                                         $interface = (object) $maker->makeInterface($currentVal);
                                         $interfaces[] = $interface->actualName;
+                                        array_merge($functionsToImpl, $maker->getFuncToImplement($interface->filePath));
                                         break;
                                     }
                             }
                         }
 
+                        $createdClass =  ((object)$maker->makeClass($containerName, $parentClass,$interfaces, $traits, $force));
+
                         ZasHelper::log(
-                            ((object)$maker->makeClass($containerName, $parentClass,$interfaces, $traits, $force))->actualName
+                           $createdClass->actualName
                         );
 
                         break;

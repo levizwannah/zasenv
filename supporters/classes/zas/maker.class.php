@@ -10,46 +10,51 @@
  * Maker is the object that does the heavy lifting behind every `zas make` command.
  * It makes the classes, interfaces, etc.
  */
-    class Maker {
+    class Maker extends AbstractCommandExecutor{
 
-
-        /**
-         * The root directory as specified in the Zas Config
-         * @var string
-         */
-        private $rootDir = "";
         
         /**
-         * The Zas config object
-         * @var object
+         * @param string $filePath
+         * 
+         * @return array [[accessModifier => accessModifer, funcHeader => funcHeader]]
          */
-        private $zasConfig;
+        public function getFuncToImplement(string $filePath){
+            $fileContents = file_get_contents($filePath);
 
-        # use traits
-        use NsUtilTrait;
-        #ut#
+            $fcArray = preg_split("/function/", $fileContents, -1, PREG_SPLIT_NO_EMPTY);
+            $fcArray = array_map('trim', $fcArray);
+            # access modifiers
+            $public = "public";
+            $protected = "protected";
+            $private = "private";
 
-        /**
-         * Creates a new maker object.
-         * @param object $zasConfig
-         */
-        public function __construct(object $zasConfig){
-            $this->zasConfig = $zasConfig;
-            $root = $this->zasConfig->directories->root;
+            $functions = [];
 
-            $parentDir = preg_split("/$root/", __DIR__);
-            $this->rootDir = $parentDir[0].DIRECTORY_SEPARATOR."$root";
-        }
+            for($i = 0; $i < count($fcArray); $i++){
+                $currentFunc  = $fcArray[$i];
+                $currentAccessMod = $public;
 
-        /**
-         * Creates a directory in a subdirectory
-         */
-        private function makeDirectory($path){
-            return (new System())->makeDirectory($path);
-        }
+                if(!preg_match("/\w+\(\w*\)/", $currentFunc)) continue;
 
-        private function getFullPath(string $path){
-            return $this->rootDir . $path;
+                if($i != 0){
+                    $aM = strtolower($fcArray[$i-1]);
+                    switch($aM){
+                        case $private:
+                            $currentAccessMod = $private;
+                            break;
+                        case $protected:
+                            $currentAccessMod = $protected;
+                            break;
+                    }
+                }
+
+                $functions[] = [
+                        "accessModifier" => $currentAccessMod,
+                        "funcHeader" => $currentFunc
+                    ];
+            }
+
+            return $functions;
         }
         
 
@@ -238,7 +243,7 @@
             $regex = preg_replace("/\\\w{1}/", "", $this->zasConfig->nameConventionsRegex->abstractClass);
             $regex = preg_replace("/\W/", "", $regex);
 
-            # remove trait from the traitName incase it is there.
+            # remove Abstract from the className incase it is there.
             $className = $this->cleanName($className, $regex, ZasConstants::R_START);
 
 
@@ -276,6 +281,35 @@
                 "actualName" => $classObj->getQualifiedName(),
                 "filePath" => $filePath
             ];
+        }
+
+
+        /**
+         * Makes a type of class based on the name of the class.
+         * @param string $className
+         * @param string $parentClassName
+         * @param array $impInterfaces
+         * @param array $useTraits
+         * @param bool $force
+         * 
+         * @return [type]
+         */
+        public function makeSpecifiedClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = [], bool $force = false){
+            $actualName = $this->getName($className);
+
+            $abRegex = $this->zasConfig->nameConventionsRegex->abstractClass;
+            $constantsRegex = $this->zasConfig->nameConventionsRegex->constantsClass;
+          
+
+            if(preg_match("/$abRegex/", $actualName)){
+                return $this->makeAbstractClass($className, $parentClassName, $impInterfaces, $useTraits, $force);
+            }
+            else if (preg_match("/$constantsRegex/", $actualName)){
+                return $this->makeConstClass($className, $parentClassName);
+            }
+            else{
+                return $this->makeClass($className, $parentClassName, $impInterfaces, $useTraits, $force);
+            }
         }
 
         /**
