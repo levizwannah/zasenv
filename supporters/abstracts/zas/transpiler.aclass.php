@@ -116,6 +116,7 @@
           */
          private function loadTemplateCode(){
              $this->templateCode = file_get_contents($this->templatePath);
+             return $this;
          }
      }
 ?>

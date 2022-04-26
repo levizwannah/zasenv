@@ -16,45 +16,20 @@
         /**
          * @param string $filePath
          * 
-         * @return array [[accessModifier => accessModifer, funcHeader => funcHeader]]
+         * @return array $functions - function headers
          */
         public function getFuncToImplement(string $filePath){
             $fileContents = file_get_contents($filePath);
 
-            $fcArray = preg_split("/function/", $fileContents, -1, PREG_SPLIT_NO_EMPTY);
-            $fcArray = array_map('trim', $fcArray);
-            # access modifiers
-            $public = "public";
-            $protected = "protected";
-            $private = "private";
+            $unwantedCnt = preg_split("/(public|protected)\s+function\s+\w+\(.*\)\s*;/", $fileContents, -1, PREG_SPLIT_NO_EMPTY);
 
-            $functions = [];
-
-            for($i = 0; $i < count($fcArray); $i++){
-                $currentFunc  = $fcArray[$i];
-                $currentAccessMod = $public;
-
-                if(!preg_match("/\w+\(\w*\)/", $currentFunc)) continue;
-
-                if($i != 0){
-                    $aM = strtolower($fcArray[$i-1]);
-                    switch($aM){
-                        case $private:
-                            $currentAccessMod = $private;
-                            break;
-                        case $protected:
-                            $currentAccessMod = $protected;
-                            break;
-                    }
-                }
-
-                $functions[] = [
-                        "accessModifier" => $currentAccessMod,
-                        "funcHeader" => $currentFunc
-                    ];
+            foreach($unwantedCnt as $unwanted){
+                $fileContents = str_replace("$unwanted", "", $fileContents);
             }
+            $fileContents = preg_replace("/\s+;/", ";", $fileContents);
 
-            return $functions;
+            $fcArray = preg_split("/;/", $fileContents, -1, PREG_SPLIT_NO_EMPTY);
+            return $fcArray;
         }
         
 
@@ -95,6 +70,7 @@
                     }
             }
             
+            return $this;
         }
 
         /**

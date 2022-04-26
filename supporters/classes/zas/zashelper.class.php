@@ -175,7 +175,6 @@
                                     {
                                         $parent = (object)$maker->makeSpecifiedClass($currentVal);
                                         $parentClass = $parent->actualName;
-                                        array_merge($functionsToImpl, $maker->getFuncToImplement($parent->filePath));
 
                                         break;
                                     }

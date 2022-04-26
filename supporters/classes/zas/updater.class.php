@@ -11,6 +11,13 @@
         # use traits
         #ut#
 
+        /**
+         * Adds a list of function to the file given that it is a class
+         * @param array $functions
+         * @param mixed $filePath
+         * 
+         * @return [type]
+         */
         public function addFunc(array $functions, $filePath){
             $fileContents = trim(file_get_contents($filePath));
             
