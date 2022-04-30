@@ -178,6 +178,13 @@ use Zas\ZasHelper;
             }
         }
 
+        // public function testLoadSpeed($name){
+        //     $start = microtime(true);
+        //     $this->load($name);
+        //     $end = microtime(true);
+        //     echo "\n(Loading $name took " . $end - $start . " ms)\n";
+        // }
+
         /**
          * registers the vendor autoloader if it exists and registers our autoloading function
          */
