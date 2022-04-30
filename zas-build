@@ -1,6 +1,0 @@
-<?php
-    $zasFile = fopen("zas", "w");
-    fwrite($zasFile, file_get_contents("zas.php"));
-    fclose($zasFile);
-    echo "Build Successfully\n";
-?>

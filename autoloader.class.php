@@ -30,7 +30,7 @@ use Zas\ZasHelper;
         public function __construct()
         {
             #Use the Zas configuration to set the extensions and path
-            $zasConfig = file_get_contents(__DIR__. "/zas-config.json");
+            $zasConfig = file_get_contents(__DIR__. "/zasconfig.json");
             $config = json_decode($zasConfig);
             $this->path = $config->path;
             $this->extensions = $config->extensions;
