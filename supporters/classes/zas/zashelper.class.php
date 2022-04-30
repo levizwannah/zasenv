@@ -14,7 +14,7 @@
          */
         private $zasConfig;
         private $rootDir;
-        public static $configPath = __DIR__. "/../../../zas-config.json";
+        public static $configPath = __DIR__. "/../../../zasconfig.json";
 
 
         # traits here

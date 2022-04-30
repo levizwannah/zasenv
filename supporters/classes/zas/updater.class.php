@@ -19,6 +19,8 @@
          * @return [type]
          */
         public function addFunc(array $functions, $filePath){
+            if(count($functions) == 0) return;
+            
             $fileContents = trim(file_get_contents($filePath));
             $funcStr = "";
             $fmt = new Formatter();
