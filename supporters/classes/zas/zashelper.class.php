@@ -116,9 +116,12 @@
          */
         private function execMake(int $argc, array $argv){
             $maker = new Maker($this->zasConfig);
+            $updater = new Updater($this->zasConfig);
 
             $container = strtolower($argv[2] ?? "");
             $containerName = $argv[3] ?? "";
+            $functionsToImpl = [];
+
             $force = false;
             $forceIndex = array_search(ZasConstants::DASH_DASH_F, $argv);
             if($forceIndex !== false) {
@@ -131,7 +134,7 @@
             switch($container){
                 case ZasConstants::ZC_CLASS:
                     {
-                        $functionsToImpl = [];
+                       
 
                         $interfaces = $traits = [];
                         $parentClass = "";
@@ -174,8 +177,8 @@
                                 case $isParent:
                                     {
                                         $parent = (object)$maker->makeSpecifiedClass($currentVal);
+                                        $functionsToImpl = array_merge($functionsToImpl, $maker->getFuncToImplement($parent->filePath));
                                         $parentClass = $parent->actualName;
-
                                         break;
                                     }
                                 case $isTrait:
@@ -189,17 +192,19 @@
                                     {
                                         $interface = (object) $maker->makeInterface($currentVal);
                                         $interfaces[] = $interface->actualName;
-                                        array_merge($functionsToImpl, $maker->getFuncToImplement($interface->filePath));
+                                        $functionsToImpl = array_merge($functionsToImpl, $maker->getFuncToImplement($interface->filePath));
                                         break;
                                     }
                             }
                         }
 
                         $createdClass =  ((object)$maker->makeClass($containerName, $parentClass,$interfaces, $traits, $force));
+                        $updater->addFunc($functionsToImpl, $createdClass->filePath);
 
-                        ZasHelper::log(
+                        ZasHelper::log( "\nSuccessfully created class: ".
                            $createdClass->actualName
                         );
+                        ZasHelper::log("Path: ". $createdClass->filePath);
 
                         break;
                     }
@@ -230,9 +235,11 @@
                             }
                         }
 
-                        ZasHelper::log(
-                            ((object)$maker->makeInterface($containerName, $interfaces, $force))->actualName
+                        $madeInterface = ((object)$maker->makeInterface($containerName, $interfaces, $force));
+                        ZasHelper::log( "\nSuccessfully created Interface: ".
+                            $madeInterface->actualName
                         );
+                        ZasHelper::log("Path: ". $madeInterface->filePath);
 
                         break;
                     }
@@ -262,9 +269,10 @@
                                     }
                             }
                         }
-
-                        ZasHelper::log(
-                            ((object)$maker->makeTrait($containerName, $traits, $force))->actualName
+                        $madeTrait = ((object)$maker->makeTrait($containerName, $traits, $force));
+                        ZasHelper::log( "\nSuccessfully created Trait: ".
+                            $madeTrait->actualName .
+                            "\nPath: ". $madeTrait->filePath
                         );
 
                         break;
@@ -291,8 +299,11 @@
                             }
                         }
 
+                        $madeConst =   ((object)$maker->makeConstClass($containerName, $parentClass, $force));
                         ZasHelper::log(
-                            ((object)$maker->makeConstClass($containerName, $parentClass, $force))->actualName
+                          "\nSuccessfully created Constants Class: ".
+                          $madeConst->actualName
+                          ."\nPath: ".$madeConst->filePath . "\nNote: Constants Class Constructor is  private by default"
                         );
 
                         break;
@@ -354,13 +365,17 @@
                                     {
                                         $interface = (object) $maker->makeInterface($currentVal);
                                         $interfaces[] = $interface->actualName;
+                                        $functionsToImpl = array_merge($functionsToImpl, $maker->getFuncToImplement($interface->filePath));
                                         break;
                                     }
                             }
                         }
-
+                        $madeAbstract = ((object)$maker->makeAbstractClass($containerName, $parentClass,$interfaces, $traits, $force));
+                        $updater->addFunc($functionsToImpl, $madeAbstract->filePath);
                         ZasHelper::log(
-                            ((object)$maker->makeAbstractClass($containerName, $parentClass,$interfaces, $traits, $force))->actualName
+                            "\nSuccessfully made Abstract class: ".
+                            $madeAbstract->actualName .
+                            "\nPath: ". $madeAbstract->filePath
                         );
 
                         break;

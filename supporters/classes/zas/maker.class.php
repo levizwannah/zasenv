@@ -20,8 +20,7 @@
          */
         public function getFuncToImplement(string $filePath){
             $fileContents = file_get_contents($filePath);
-
-            $unwantedCnt = preg_split("/(public|protected)\s+function\s+\w+\(.*\)\s*;/", $fileContents, -1, PREG_SPLIT_NO_EMPTY);
+            $unwantedCnt = preg_split("/(public|protected)?\s+?function\s+\w+\(.*\)\s*;/", $fileContents, -1, PREG_SPLIT_NO_EMPTY);
 
             foreach($unwantedCnt as $unwanted){
                 $fileContents = str_replace("$unwanted", "", $fileContents);
@@ -272,6 +271,7 @@
          */
         public function makeSpecifiedClass(string $className, string $parentClassName = "", array $impInterfaces = [], array $useTraits = [], bool $force = false){
             $actualName = $this->getName($className);
+            ZasHelper::log("ActualName $actualName");
 
             $abRegex = $this->zasConfig->nameConventionsRegex->abstractClass;
             $constantsRegex = $this->zasConfig->nameConventionsRegex->constantsClass;
@@ -279,6 +279,7 @@
 
             if(preg_match("/$abRegex/", $actualName)){
                 return $this->makeAbstractClass($className, $parentClassName, $impInterfaces, $useTraits, $force);
+                ZasHelper::log("making abstract class specified");
             }
             else if (preg_match("/$constantsRegex/", $actualName)){
                 return $this->makeConstClass($className, $parentClassName);

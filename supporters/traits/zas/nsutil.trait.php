@@ -23,8 +23,9 @@
          */
         public function getName($qualifiedName){
             $actualName = preg_split("/\W/", $qualifiedName);
+    
             end($actualName);
-            return current($actualName);
+            return ucwords(current($actualName));
         }
 
         /**

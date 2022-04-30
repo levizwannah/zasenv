@@ -82,7 +82,7 @@
          */
         public function canMakePhpCode(){
             if(empty($this->qualifiedName)){
-                echo "ClassObject::Error: No classname given\n";
+                echo "Transpiler::Error: No qualified name given\n";
                 return false;
             }
 
@@ -115,10 +115,6 @@
                 }
 
                     $useStmt = "use $qualifiedName;";
-                    if($this->getName($qualifiedName) !== $name){
-                            # is alias
-                            $useStmt = "use $qualifiedName as $name;";
-                    }
                     $this->useNsString[] = $useStmt;
                     $list[] = $name;
 

@@ -78,10 +78,11 @@
 
                 #handling traits
                 $this->formatTraits();
+                $fmt = new Formatter();
 
                 #namespace usage
                 if(!empty($this->useNsString)){
-                        $useNs = implode("\n    ", $this->useNsString) . "\n    ". ClassObject::UNS;
+                        $useNs = $fmt->tabOnEnter(implode("\n", $this->useNsString) . "\n". ClassObject::UNS);
                         $this->changeMap[ClassObject::UNS] = $useNs;
                 }
                 
@@ -116,8 +117,8 @@
                         $output = array_map(function($value){
                                 return "use $value;";
                         }, $list);
-
-                        $output = implode("\n        ", $output) . "\n        ". ClassObject::UT ;
+                        $fmt = new Formatter();
+                        $output = $fmt->tabOnEnter(implode("\n", $output) . "\n". ClassObject::UT, ZasConstants::FUNC_INDENT_TAB);
                 });
 
                 if($this->changeMap[ClassObject::UT] === ""){

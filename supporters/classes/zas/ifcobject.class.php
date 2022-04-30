@@ -46,7 +46,8 @@
 
             #namespace usage
             if(!empty($this->useNsString)){
-                    $useNs = implode("\n    ", $this->useNsString) . "\n    ". IfcObject::UNS;
+                    $fmt = new Formatter();
+                    $useNs = $fmt->tabOnEnter(implode("\n", $this->useNsString) . "\n". IfcObject::UNS);
                     $this->changeMap[IfcObject::UNS] = $useNs;
             }
             

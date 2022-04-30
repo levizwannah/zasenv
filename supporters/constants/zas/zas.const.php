@@ -47,6 +47,15 @@
                 R_END = 1,
                 R_ANYWHERE = 2;
 
+        /**
+         * Constants for formatter
+         */
+        const   SPACE_DEFAULT = 1,
+                ENTER_DEFAULT = 1,
+                TAB_DEFAULT = 1,
+                INDENT_TAB = 1,
+                FUNC_INDENT_TAB = 2;
+
         private function __construct(){}
     }
 ?>

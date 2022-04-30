@@ -20,11 +20,22 @@
          */
         public function addFunc(array $functions, $filePath){
             $fileContents = trim(file_get_contents($filePath));
-            
-            foreach($functions as $func){
+            $funcStr = "";
+            $fmt = new Formatter();
 
+            foreach($functions as $func){
+                $funcStr .= $fmt->tabOnEnter("$func{\n".$fmt->tab()."#code...\n}", ZasConstants::FUNC_INDENT_TAB). $fmt->enter();
             }
+
+            preg_match("/\{[\W\w.]*\}/", $fileContents, $match);        
+            $foundCnt = $match[count($match)-1];
+            $tmp = explode("}", $foundCnt);
+            array_pop($tmp);
+            $str = implode("}", $tmp) . $funcStr . $fmt->indent("}");
+            $fileContents = str_replace($foundCnt, $str, $fileContents);
+            file_put_contents($filePath, $fileContents);
         }
     }
 
 ?>
+            

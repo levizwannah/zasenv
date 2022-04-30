@@ -42,10 +42,10 @@
 
             #format interfaces
             $this->formatTraits();
-
+            $fmt = new Formatter();    
             #namespace usage
             if(!empty($this->useNsString)){
-                    $useNs = implode("\n    ", $this->useNsString) . "\n    ". IfcObject::UNS;
+                    $useNs = $fmt->tabOnEnter(implode("\n", $this->useNsString) . "\n". IfcObject::UNS);
                     $this->changeMap[IfcObject::UNS] = $useNs;
             }
             
@@ -62,12 +62,13 @@
         protected function formatTraits(){
                 
             $this->changeMap[TraitObject::UT] = $this->format($this->traits, function(&$list, &$output){
-                    
+                    $fmt = new Formatter();
+
                     $output = array_map(function($value){
                             return "use $value;";
                     }, $list);
 
-                    $output = implode("\n        ", $output) . "\n        ". TraitObject::UT ;
+                    $output = $fmt->tabOnEnter(implode("\n", $output) . "\n". TraitObject::UT, ZasConstants::FUNC_INDENT_TAB);
             });
 
             if($this->changeMap[TraitObject::UT] === ""){

@@ -50,7 +50,7 @@
          /**
           * Do the actual transpilation
           */
-         abstract function transpile();
+         abstract public function transpile();
 
          
          /**
