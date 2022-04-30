@@ -10,7 +10,7 @@
  * Maker is the object that does the heavy lifting behind every `zas make` command.
  * It makes the classes, interfaces, etc.
  */
-    class Maker extends AbstractCommandExecutor{
+    class ContainerMaker extends AbstractCommandExecutor{
 
         
         /**

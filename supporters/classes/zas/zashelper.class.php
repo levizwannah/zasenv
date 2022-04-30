@@ -115,11 +115,17 @@
          * @return void
          */
         private function execMake(int $argc, array $argv){
-            $maker = new Maker($this->zasConfig);
+            $maker = new ContainerMaker($this->zasConfig);
             $updater = new Updater($this->zasConfig);
 
             $container = strtolower($argv[2] ?? "");
             $containerName = $argv[3] ?? "";
+            if(empty($containerName))
+            {
+                ZasHelper::log("Error::Name ERROR: No actor name");
+                return;
+            }
+
             $functionsToImpl = [];
 
             $force = false;
@@ -379,6 +385,157 @@
                         );
 
                         break;
+                    }
+                case ZasConstants::ZC_ACTOR:
+                    {
+                        $parentDirName = "";
+                        $actorTypeDir = "";
+                        $isDir = false;
+
+                        $isNothing = $isParent = $isType =  false;
+                        $states = [&$isNothing, &$isParent, &$isType];
+
+                        $setState = function(array &$states, int $index){
+                            foreach($states as  $i => &$state){
+                                   $state = false;
+                                   if($i == $index) $state = true; 
+                            }
+                        };
+
+                        for($i = 4; $i < $argc; $i++){
+                            $currentVal = $argv[$i];
+
+                            if($currentVal == ZasConstants::DASH_D){
+                                $isDir = true;
+                                $setState($states, 0);
+                                continue;
+                            }
+
+                            # check for -p, -d or -in
+                            switch($currentVal){
+                                case ZasConstants::DASH_P:
+                                    {
+                                        $setState($states, 1);
+                                        continue 2;
+                                    }
+                                case ZasConstants::DASH_IN:
+                                    {
+                                        $setState($states, 2);
+                                        continue 2;
+                                    }
+                            }
+
+                            if($isParent){
+                                $parentDirName = $currentVal;
+                                $setState($states, 0);
+                                continue;
+                            }
+
+                            if($isType){
+                                switch($currentVal){
+                                    case ZasConstants::WORD_FORE:
+                                        {
+                                            $actorTypeDir = $this->zasConfig->path->actors->foreground;
+                                            $setState($states, 0);
+                                            break;
+                                        }
+                                    case ZasConstants::WORD_BACK:
+                                        {
+                                            $actorTypeDir = $this->zasConfig->path->actors->background;
+                                            $setState($states, 0);
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            ZasHelper::log("ACTOR::ERROR: choose fore or back after -in: '$currentVal' given");
+                                            return;
+                                        }
+                                }
+
+                                $setState($states, 0);
+                                continue;
+                            }
+                        }
+
+                        if($actorTypeDir == ""){
+                            ZasHelper::log("ERROR::ACTOR: No actor type");
+                            return;
+                        }
+
+                        $maker = new FileMaker($this->zasConfig);
+
+                        if($isDir){
+                            $maker = new FolderMaker($this->zasConfig);
+                            $maker->in($actorTypeDir)->make($parentDirName.DIRECTORY_SEPARATOR.$containerName);
+                        }
+                        else{
+                            $file = (object) $maker->in($actorTypeDir)->make($containerName, $parentDirName);
+                            file_put_contents($file->fullPath, ZasConstants::TXT_PHP_INIT);
+                        }
+
+                        
+
+                        ZasHelper::log("Successfully made $containerName actor ". (($isDir)? "directory":"file"). " in $actorTypeDir");
+
+                        break;
+                    }
+                case ZasConstants::ZC_SUPPORTER:
+                    {
+                        $parentDirName = "";
+                        $isDir = false;
+
+                        $isNothing = $isParent =  false;
+                        $states = [&$isNothing, &$isParent];
+
+                        $setState = function(array &$states, int $index){
+                            foreach($states as  $i => &$state){
+                                   $state = false;
+                                   if($i == $index) $state = true; 
+                            }
+                        };
+
+                        for($i = 4; $i < $argc; $i++){
+                            $currentVal = $argv[$i];
+
+                            if($currentVal == ZasConstants::DASH_D){
+                                $isDir = true;
+                                $setState($states, 0);
+                                continue;
+                            }
+
+                            # check for -p
+                            switch($currentVal){
+                                case ZasConstants::DASH_P:
+                                    {
+                                        $setState($states, 1);
+                                        continue 2;
+                                    }
+                            }
+
+                            if($isParent){
+                                $parentDirName = $currentVal;
+                                $setState($states, 0);
+                                continue;
+                            }
+
+                        }
+
+                        $maker = new FileMaker($this->zasConfig);
+
+                        if($isDir){
+                            $maker = new FolderMaker($this->zasConfig);
+                            $maker->in($this->zasConfig->path->supporters)->make($parentDirName.DIRECTORY_SEPARATOR.$containerName);
+                        }
+                        else{
+                            $file = (object) $maker->in($this->zasConfig->path->supporters)->make($containerName, $parentDirName);
+                            file_put_contents($file->fullPath, ZasConstants::TXT_PHP_INIT);
+                        }
+
+                        
+
+                        ZasHelper::log("Successfully made $containerName supporter ". (($isDir)? "directory":"file"). " in $parentDirName");
+
+                            break;
                     }
                 default:
                    {

@@ -23,3 +23,10 @@ Zas Commands:
             - for ab-class: same as class
             - for class-const: [-p parentConstantClass]
                       
+    
+    2. php zas make [actor|supporter] [name] [-in fore|back] [-p parent folder name] [-d]
+        i. use -d if the actor or supporter is a directory.
+       ii. '-p parentfoldername' is the folder in which the new file or folder will be placed
+            by default, they will be placed in the supporters or actors folder
+      iii. if the file or folder is an actor, use [-in (fore|hind) ] to place the file
+            or folder in foreground or background directory

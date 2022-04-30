@@ -34,7 +34,12 @@
         "interface": "/supporters/interfaces",
         "trait": "/supporters/traits",
         "constantsClass": "/supporters/constants",
-        "config": "/supporters/configs"
+        "config": "/supporters/configs",
+        "actors": {
+            "foreground":"/actors/foreground",
+            "background":"/actors/background"
+        },
+        "supporters":"/supporters"
     },
 
     "nameConventionsRegex": {
