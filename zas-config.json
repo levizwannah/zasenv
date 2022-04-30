@@ -17,7 +17,11 @@
         "trait": "trait.php",
         "constantsClass": "const.php",
         "include": "inc.php",
-        "config": "conf"
+        "config": "conf",
+        "actors": {
+            "foreground": "php",
+            "background": "bkg.php"
+        }
     },
 
     "templatePath": {
@@ -25,7 +29,11 @@
         "abstractClass": "/supporters/templates/aclass.tpl",
         "interface": "/supporters/templates/interface.tpl",
         "trait": "/supporters/templates/trait.tpl",
-        "constantsClass": "/supporters/templates/const.tpl"
+        "constantsClass": "/supporters/templates/const.tpl",
+        "actors" : {
+            "foreground": "/supporters/templates/foreground.tpl",
+            "background": "/supporters/templates/background.tpl"
+        }
     },
 
     "path": {
