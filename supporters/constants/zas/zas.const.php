@@ -22,7 +22,8 @@
                 ZC_CONST = "class-const",
                 ZC_UPD_ROOT = "update-root-path",
                 ZC_ACTOR = "actor",
-                ZC_SUPPORTER = "supporter";
+                ZC_SUPPORTER = "supporter",
+                ZC_RUN = "run";
 
         /**
          * Dash constants 
@@ -33,7 +34,8 @@
                 DASH_E = "-e",
                 DASH_D = "-d",
                 DASH_IN = "-in",
-                DASH_DASH_F = "--f";
+                DASH_DASH_F = "--f",
+                DASH_DASH_ARG = "--arg";
         /** 
          * Word constants
          */

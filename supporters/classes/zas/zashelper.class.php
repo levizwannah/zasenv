@@ -12,8 +12,8 @@
         /**
          * @var object $zasConfig Contains the configuration in the zas-config.json
          */
-        private $zasConfig;
-        private $rootDir;
+        protected $zasConfig;
+        protected $rootDir;
         public static $configPath = __DIR__. "/../../../zasconfig.json";
 
 
@@ -37,7 +37,7 @@
         /**
          * Loads the zas configuration from the zas-config.json
          */
-        private function loadConfig(){
+        protected function loadConfig(){
             $config = file_get_contents(ZasHelper::$configPath);
             $this->zasConfig = json_decode($config);
         }
@@ -45,7 +45,7 @@
         /**
          * Update root path in the zas-config.json
          */
-        private function updateRootPath(){
+        protected function updateRootPath(){
             $curRoot = getcwd();
             $root = preg_split("/[\\".DIRECTORY_SEPARATOR."\/]/", $curRoot);
             $rIndex = array_key_last($root);
@@ -66,42 +66,6 @@
         public function printHelp(){
             echo file_get_contents("cmd.txt");
         }
-
-        /**
-         * Handles the commands
-         * @param int $argc
-         * @param array $argv
-         * 
-         * @return void
-         */
-        public function process(int &$argc, array &$argv){
-            
-            if($argc < 2){
-                $this->printHelp();
-                return;
-            }
-
-            # show list
-            $mainCommand = strtolower($argv[1]);
-
-            switch($mainCommand){
-                case ZasConstants::ZC_MAKE:
-                    {
-                        $this->execMake($argc, $argv);
-                        break;
-                    }
-                case ZasConstants::ZC_UPD_ROOT:
-                    {
-                        $this->updateRootPath();
-                        break;
-                    }
-                default:
-                {
-                    ZasHelper::log("Didn't call any case");
-                }
-            }
-            
-        }
         
         #----------------------------------------------------
         # Functions for executing different commands
@@ -114,7 +78,7 @@
          * 
          * @return void
          */
-        private function execMake(int $argc, array $argv){
+        protected function execMake(int $argc, array $argv){
             $maker = new ContainerMaker($this->zasConfig);
             $updater = new Updater($this->zasConfig);
 
@@ -309,7 +273,7 @@
                         ZasHelper::log(
                           "\nSuccessfully created Constants Class: ".
                           $madeConst->actualName
-                          ."\nPath: ".$madeConst->filePath . "\nNote: Constants Class Constructor is  private by default"
+                          ."\nPath: ".$madeConst->filePath . "\nNote: Constants Class Constructor is  protected by default"
                         );
 
                         break;
@@ -544,6 +508,42 @@
                    }
                 
             }
+        }
+
+        /**
+         * Executes the run command for background files
+         * @param int $argc
+         * @param array $argv
+         * 
+         * @return void
+         */
+        protected function run(int $argc, array $argv){
+            if(!isset($argv[2])){
+                exit(
+                    Cli::log("You must provide a file path")
+                );
+            }
+
+            $path = strtolower($argv[2]);
+
+            $argArray = [];
+            $isArg = false;
+
+            for($i = 3; $i< $argc; $i++){
+                $currentVal = $argv[$i];
+
+                if($currentVal == ZasConstants::DASH_DASH_ARG){
+                    $isArg = true;
+                    continue;
+                }
+
+                if(!$isArg) continue;            
+                $argArray[] = $currentVal;
+            }
+            $runner = new FileRunner($this->zasConfig);
+            $runner->withArg($argArray)->runFile($path);
+            
+            return $this;
         }
 
         /**
