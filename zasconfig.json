@@ -20,7 +20,7 @@
         "config": "conf",
         "actors": {
             "foreground": "php",
-            "background": "bkg.php"
+            "background": "php"
         }
     },
 

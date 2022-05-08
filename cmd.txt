@@ -30,3 +30,9 @@ Zas Commands:
             by default, they will be placed in the supporters or actors folder
       iii. if the file or folder is an actor, use [-in (fore|hind) ] to place the file
             or folder in foreground or background directory
+
+    3. php zas run [path to background script] --arg [argument list]
+        i. [path to background script] - taking the actors/background as reference,
+                                          this is the path to the background process.   
+       ii. [argument list] - if the file accept any agruments or input, pass the 
+                              arguments just list it will appear to the file.
