@@ -5,7 +5,7 @@
      # zas helps in creation of classes including adding their boiler plate codes.
  
      require("master.setup.php");
-     use Zas\Cli;
+     use CustomZas\Cli;
      $zas = new Cli(); 
      $zas->process($argc, $argv);
 
