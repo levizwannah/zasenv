@@ -426,6 +426,9 @@
                             return;
                         }
 
+                        $containerName = $this->toZasName($containerName, $this->zasConfig->fileNameSeparator);
+                        $parentDirName= $this->toZasName($parentDirName, $this->zasConfig->fileNameSeparator);
+
                         $maker = new FileMaker($this->zasConfig);
 
                         if($isDir){
@@ -483,6 +486,8 @@
                             }
 
                         }
+                        $containerName = $this->toZasName($containerName, $this->zasConfig->fileNameSeparator);
+                        $parentDirName= $this->toZasName($parentDirName, $this->zasConfig->fileNameSeparator);
 
                         $maker = new FileMaker($this->zasConfig);
 

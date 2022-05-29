@@ -39,7 +39,7 @@
             $system = new System();
             $dirName = $system->makeDirectory($this->currentDir.DIRECTORY_SEPARATOR.$parentDirName);
 
-            return $system->createFile($dirName . DIRECTORY_SEPARATOR . $fileName. ".$extension");
+            return $system->createFile($dirName . DIRECTORY_SEPARATOR . $this->toZasName($fileName). ".$extension");
         }
         
     }

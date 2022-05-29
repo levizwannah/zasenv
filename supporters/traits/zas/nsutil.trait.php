@@ -3,6 +3,8 @@
 
     trait NsUtilTrait {
 
+        use FileUtilTrait;
+
         /**
          * Splits a name into parts by non-alpha numeric characters.
          */

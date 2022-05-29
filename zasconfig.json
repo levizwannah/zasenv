@@ -56,6 +56,7 @@
         "trait": "\\w+Trait$",
         "constantsClass": "\\w+Constants$",
         "class": ".*"
-    }
-    
+    },
+
+    "fileNameSeparator": "-"
 }

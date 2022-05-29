@@ -82,8 +82,8 @@
          */
         private function makeFile(string $qualifiedName, string $zasPathStr, string $zasExtStr){
             $namespace = $this->getNamespaceText($this->homeDir($qualifiedName));
-
-            $homeDir = strtolower($namespace);
+            $fNSeparator = $this->zasConfig->fileNameSeparator;
+            $homeDir = $this->toZasName($namespace, $fNSeparator);
 
             # get the class name
             $actualName = $this->capitalizeWords($this->getName($qualifiedName));
@@ -93,7 +93,7 @@
             $core = new System();
             $core->makeDirectory($homeDir);
             
-            $filePath = (object)$core->createFile($homeDir.DIRECTORY_SEPARATOR. strtolower($actualName). ".". $this->zasConfig->extensions->$zasExtStr);
+            $filePath = (object)$core->createFile($homeDir.DIRECTORY_SEPARATOR. $this->toZasName($actualName, $fNSeparator). ".". $this->zasConfig->extensions->$zasExtStr);
             if(!$filePath->status) ZasHelper::log("System::Error::Could not create file");
 
             return [

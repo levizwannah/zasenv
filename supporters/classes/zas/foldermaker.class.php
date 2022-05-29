@@ -33,7 +33,7 @@
          * 
          */
         public function make(string $folderName){
-            return (new System())->makeDirectory($this->currentDir. DIRECTORY_SEPARATOR . $folderName);
+            return (new System())->makeDirectory($this->currentDir. DIRECTORY_SEPARATOR . $this->toZasName($folderName));
         }
     }
 
