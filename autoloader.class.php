@@ -1,12 +1,10 @@
 <?php
 
-use Zas\ZasHelper;
-
     /**
      *  Autoloads classes, interfaces, and traits. It also automatically include the vendor autoloader if the folder is present.
      *  **requires that the zas-config.json be configured properly.**
      */
-    class AutoLoader{
+    class Autoloader{
         const ZC_TRAIT = "trait";
         const ZC_CLASS = "class";
         const ZC_ACLASS = "abstractClass";
@@ -204,20 +202,21 @@ use Zas\ZasHelper;
         /**
          * registers the vendor autoloader if it exists and registers our autoloading function
          */
-        public function autoLoad(){
-            #setting vendor autoloading
-            if(is_dir(__DIR__."/vendor")){
-                require (__DIR__."/vendor/autoload.php");
-            }   
-
+        public function autoLoad(){  
             spl_autoload_register([$this, "load"]);
+
+             #setting vendor autoloading
+             if(is_dir(__DIR__."/vendor")){
+                include_once (__DIR__."/vendor/autoload.php");
+                include_once (__DIR__ . "/vendor/levizwannah/zas-php-cli/autoload.php");
+              } 
             # echo "Autoloading...\n";
         }
 
         /**
          * Converts a camel case name into a ZAS qualified name.
          * for example, SomeNamespace/someFile will return some-namespace/some-file.
-         * However, the file separator is specified in the zasconfig.json.
+         * However, the file separator is specified in the zas-config.json.
          * 
          * takes O(n) time.
          * @param string $fileName

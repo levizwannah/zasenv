@@ -5,7 +5,7 @@
     */
     require(__DIR__ . "/autoloader.class.php");
 
-    $autoloader = new AutoLoader();
+    $autoloader = new Autoloader();
     $autoloader->autoLoad();
     
 ?>

@@ -1,0 +1,56 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "723a8525968457ea9e36784c00e68b48",
+    "packages": [],
+    "packages-dev": [
+        {
+            "name": "levizwannah/zas-php-cli",
+            "version": "v1.0.3",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/levizwannah/zas-php-cli.git",
+                "reference": "c62fb85de4bfc0f08def0ade7137a7b4185f6785"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/levizwannah/zas-php-cli/zipball/c62fb85de4bfc0f08def0ade7137a7b4185f6785",
+                "reference": "c62fb85de4bfc0f08def0ade7137a7b4185f6785",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "autoload.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Levi Kamara Zwannah",
+                    "email": "levizwannah@gmail.com"
+                }
+            ],
+            "description": "The CLI tool for the ZasEnv",
+            "support": {
+                "issues": "https://github.com/levizwannah/zas-php-cli/issues",
+                "source": "https://github.com/levizwannah/zas-php-cli/tree/v1.0.3"
+            },
+            "time": "2022-05-29T16:00:06+00:00"
+        }
+    ],
+    "aliases": [],
+    "minimum-stability": "dev",
+    "stability-flags": [],
+    "prefer-stable": true,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.0.0"
+}

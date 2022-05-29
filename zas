@@ -6,8 +6,8 @@
  
      require("master.setup.php");
      use Zas\Cli;
-  
      $zas = new Cli(); 
      $zas->process($argc, $argv);
+
      
 ?>

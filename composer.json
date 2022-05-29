@@ -5,5 +5,8 @@
     "description": "Set up the folders/directories of the API/Backend following the ZAS specification",
     "license": "MIT",
     "prefer-stable": true,
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "require-dev": {
+        "levizwannah/zas-php-cli": "^1.0"
+    }
 }
