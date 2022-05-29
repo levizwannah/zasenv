@@ -26,20 +26,29 @@ use Zas\ZasHelper;
          */
         public $convRegex;
 
+        /**
+         * The file name separator in the zas-config
+         * @var string
+         */
+        public $fileNameSeparator;
+
         # load the zas-config
         public function __construct()
         {
             #Use the Zas configuration to set the extensions and path
-            $zasConfig = file_get_contents(__DIR__. "/zasconfig.json");
+            $zasConfig = file_get_contents(__DIR__. "/zas-config.json");
             $config = json_decode($zasConfig);
             $this->path = $config->path;
             $this->extensions = $config->extensions;
             $this->convRegex = $config->nameConventionsRegex;
+            $this->fileNameSeparator = $config->fileNameSeparator;
         }
 
         private function getPath($name, $extension, $path){
             #names contain their namespaces attached to them.
-            $name = preg_replace("/\\\/", "/", strtolower($name));
+           
+            $name = str_replace("\\", "/", $name);
+            $name = $this->toZasName($name, $this->fileNameSeparator);
             $fullPath = __DIR__."/$path/$name.$extension";
             
             return $fullPath;
@@ -178,12 +187,19 @@ use Zas\ZasHelper;
             }
         }
 
-        // public function testLoadSpeed($name){
-        //     $start = microtime(true);
-        //     $this->load($name);
-        //     $end = microtime(true);
-        //     echo "\n(Loading $name took " . $end - $start . " ms)\n";
-        // }
+        /**
+         * replace load in the autoload function of this class
+         * this function's name to see the load time.
+         * @param mixed $name
+         * 
+         * @return [type]
+         */
+        public function loadAndShowTime($name){
+            $start = microtime(true);
+            $this->load($name);
+            $end = microtime(true);
+            echo "\n(Loading $name took " . $end - $start . " ms)\n";
+        }
 
         /**
          * registers the vendor autoloader if it exists and registers our autoloading function
@@ -196,6 +212,44 @@ use Zas\ZasHelper;
 
             spl_autoload_register([$this, "load"]);
             # echo "Autoloading...\n";
+        }
+
+        /**
+         * Converts a camel case name into a ZAS qualified name.
+         * for example, SomeNamespace/someFile will return some-namespace/some-file.
+         * However, the file separator is specified in the zasconfig.json.
+         * 
+         * takes O(n) time.
+         * @param string $fileName
+         * 
+         * @return string
+         */
+        private function toZasName(string $fileName, string $separator = "-"): string{
+            $fileName = trim($fileName);
+            $length = strlen($fileName);
+            
+            $newStr = "";
+            $firstCharMet = false;
+
+            for($i = 0; $i < $length; $i++){
+
+                if($firstCharMet && preg_match("/[A-Z]/", $fileName[$i])){
+                    $newStr .= $separator . strtolower($fileName[$i]);
+                    continue;
+                }
+
+                if(!$firstCharMet){
+                    $firstCharMet = preg_match("/[a-zA-Z]/", $fileName[$i]) == true;
+                }
+
+                if($firstCharMet){
+                    $firstCharMet = !preg_match("/[\/\\\]/", $fileName[$i]);
+                }
+
+                $newStr .= strtolower($fileName[$i]);
+            }
+
+            return $newStr;
         }
     }
 

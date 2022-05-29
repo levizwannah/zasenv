@@ -37,6 +37,10 @@
                     $firstCharMet = preg_match("/[a-zA-Z]/", $fileName[$i]) == true;
                 }
 
+                if($firstCharMet){
+                    $firstCharMet = !preg_match("/[\/\\\]/", $fileName[$i]);
+                }
+
                 $newStr .= strtolower($fileName[$i]);
             }
 
