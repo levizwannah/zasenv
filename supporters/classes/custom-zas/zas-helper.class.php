@@ -11,7 +11,9 @@
      * to understand what can be placed in this file.
      */
     class ZasHelper extends ZasCli  {
-        
+        # define your custom command execution logic in this file
+        # other dependencies for your command to execute will be
+        # written by you.
     }
 
 ?>
