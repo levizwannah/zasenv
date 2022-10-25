@@ -9,16 +9,16 @@
     "packages-dev": [
         {
             "name": "levizwannah/zas-php-cli",
-            "version": "v1.0.4.2",
+            "version": "v1.0.5.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/levizwannah/zas-php-cli.git",
-                "reference": "95c60e6e862515979c63db706f7a9cbe2b12bf3c"
+                "reference": "b4bd8d9547b3100c78ee9e10c4ddc1148d131d9f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/levizwannah/zas-php-cli/zipball/95c60e6e862515979c63db706f7a9cbe2b12bf3c",
-                "reference": "95c60e6e862515979c63db706f7a9cbe2b12bf3c",
+                "url": "https://api.github.com/repos/levizwannah/zas-php-cli/zipball/b4bd8d9547b3100c78ee9e10c4ddc1148d131d9f",
+                "reference": "b4bd8d9547b3100c78ee9e10c4ddc1148d131d9f",
                 "shasum": ""
             },
             "type": "library",
@@ -40,9 +40,9 @@
             "description": "The CLI tool for the ZasEnv",
             "support": {
                 "issues": "https://github.com/levizwannah/zas-php-cli/issues",
-                "source": "https://github.com/levizwannah/zas-php-cli/tree/v1.0.4.2"
+                "source": "https://github.com/levizwannah/zas-php-cli/tree/v1.0.5.1"
             },
-            "time": "2022-06-04T03:35:53+00:00"
+            "time": "2022-10-25T12:40:30+00:00"
         }
     ],
     "aliases": [],
@@ -52,5 +52,5 @@
     "prefer-lowest": false,
     "platform": [],
     "platform-dev": [],
-    "plugin-api-version": "2.0.0"
+    "plugin-api-version": "2.3.0"
 }

@@ -9,5 +9,4 @@
      $zas = new Cli(); 
      $zas->process($argc, $argv);
 
-     
 ?>
