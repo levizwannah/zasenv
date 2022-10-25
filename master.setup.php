@@ -1,11 +1,19 @@
 <?php
-    /*
-    | Do all necessary autoloading here.
-    | Vendor autoloading should be done here also.
-    */
-    require(__DIR__ . "/autoloader.class.php");
+/*
+|----------------------------------------------------------
+| Do all necessary autoloading here.
+| Vendor autoloading is done by the autoloader.
+|----------------------------------------------------------
+*/
+require(__DIR__ . "/autoloader.class.php");
 
-    $autoloader = new Autoloader();
-    $autoloader->autoLoad();
+/*--------------------------------------------------------
+|   GLOBAL VARIABLES
+|---------------------------------------------------------
+*/
+$zasConfig = json_decode(file_get_contents(__DIR__ . "/zas-config.json"));
+
+$autoloader = new Autoloader();
+$autoloader->autoLoad();
     
 ?>
