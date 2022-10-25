@@ -4,11 +4,12 @@
      *  Autoloads classes, interfaces, and traits. It also automatically include the vendor autoloader if the folder is present.
      *  **requires that the zas-config.json be configured properly.**
      */
-    class Autoloader{
+    class AutoLoader{
         const ZC_TRAIT = "trait";
         const ZC_CLASS = "class";
         const ZC_ACLASS = "abstractClass";
         const ZC_CONST = "constantsClass";
+        const ZC_INTERFACE = "interface";
         /**
          * Path Object from the zas-config
          */
@@ -34,8 +35,9 @@
         public function __construct()
         {
             #Use the Zas configuration to set the extensions and path
-            $zasConfig = file_get_contents(__DIR__. "/zas-config.json");
-            $config = json_decode($zasConfig);
+            global $zasConfig;
+            //$zasConfig = $zasConfig ?? file_get_contents(__DIR__. "/zas-config.json");
+            $config = $zasConfig ?? json_decode(file_get_contents(__DIR__. "/zas-config.json"));
             $this->path = $config->path;
             $this->extensions = $config->extensions;
             $this->convRegex = $config->nameConventionsRegex;
@@ -45,10 +47,9 @@
         private function getPath($name, $extension, $path){
             #names contain their namespaces attached to them.
            
-            $name = str_replace("\\", "/", $name);
             $name = $this->toZasName($name, $this->fileNameSeparator);
             $fullPath = __DIR__."/$path/$name.$extension";
-            
+
             return $fullPath;
         }
 
@@ -137,7 +138,25 @@
 
             require($path);
             return true;
-        } 
+        }
+        
+        /**
+         * Gets the actual name being loaded
+         * @param mixed $qualifiedName
+         * 
+         * @return array<string,string> ["actualName" => "actualName", "beginsAt" => $i];
+         */
+        private function actualName($qualifiedName){
+            $an = "";
+            $i = strlen($qualifiedName);
+
+            for($i = $i - 1; $i >= 0; $i--){
+                if($qualifiedName[$i] == "/" || $qualifiedName[$i] == "\\") break;
+                $an = $qualifiedName[$i] . $an;
+            }
+
+            return ["actualName" => $an, "beginsAt" => $i];
+        }
 
         /**
          * @param string $name Name to load. This will include the namespace plus specific name conventions.
@@ -147,35 +166,34 @@
         public function load($name){
             #check the name to know whether we are loading a class, interface, trait, or abstract class.
             #name include namespace to it.
-            # echo "loading: $name\n";
-            $splittedNames = preg_split("/\W/", $name);
-            $size = count($splittedNames);
 
-            #are we actually loading something?
-            if($size < 1) return;
-            $actualName = $splittedNames[$size - 1];
+            $actualName = $this->actualName($name);
+            $beginsAt = $actualName["beginsAt"];
+            $actualName = $actualName["actualName"];
+            $namespace = substr($name, 0, $beginsAt + 1);
 
-            foreach((array)$this->convRegex as $type => $regex){
+            if(empty($actualName)) return;
+
+            foreach($this->convRegex as $type => $regex){
                if(!preg_match("/$regex/", $actualName)) continue;
 
-                $nextRegex = preg_replace("/\\\w{1}/", "", $regex);
+                $nextRegex = str_replace("\\w", "", $regex);
                 $nextRegex = preg_replace("/\W/", "", $nextRegex);
-                $actualName = preg_replace("/$nextRegex/", "", $actualName);
+                $actualName = str_replace($nextRegex, "", $actualName);
 
-                array_pop($splittedNames);
-                $name = implode("\\", $splittedNames) . "\\$actualName";
-    
+                $name = "$namespace$actualName";
+
                switch($type){
-                   case "abstractClass": {
+                   case $this::ZC_ACLASS: {
                        return $this->loadAbstractClass($name);
                    }
-                   case "trait": {
+                   case $this::ZC_TRAIT: {
                        return $this->loadTrait($name);
                    }
-                   case "interface": {
+                   case $this::ZC_INTERFACE: {
                        return $this->loadInterface($name);
                    }
-                   case "constantsClass": {
+                   case $this::ZC_CONST: {
                        return $this->loadConstantsClass($name);
                    }
                    default: {
@@ -204,52 +222,111 @@
          */
         public function autoLoad(){  
             spl_autoload_register([$this, "load"]);
-
-             #setting vendor autoloading
-             if(is_dir(__DIR__."/vendor")){
+    
+             # setting vendor autoload
+            if(is_dir(__DIR__."/vendor")){
                 include_once (__DIR__."/vendor/autoload.php");
                 include_once (__DIR__ . "/vendor/levizwannah/zas-php-cli/autoload.php");
-              } 
-            # echo "Autoloading...\n";
+            } 
         }
 
         /**
          * Converts a camel case name into a ZAS qualified name.
          * for example, SomeNamespace/someFile will return some-namespace/some-file.
-         * However, the file separator is specified in the zas-config.json.
+         * However, the file separator is specified in the zasconfig.json.
          * 
          * takes O(n) time.
-         * @param string $fileName
+         * @param string $name
          * 
          * @return string
          */
-        private function toZasName(string $fileName, string $separator = "-"): string{
-            $fileName = trim($fileName);
-            $length = strlen($fileName);
+        public function toZasName(string $name, string $separator = "-"): string{
+            $name = trim($name);
             
             $newStr = "";
-            $firstCharMet = false;
+            $pastChar = false;
+            
+            for($i = 0; $i < strlen($name); $i++){
+            
+                $char = $name[$i];
+            
+                if($this->isUpper($char)){
 
-            for($i = 0; $i < $length; $i++){
+                    $char = $this->lower($char);
+                    if($pastChar) $newStr .= $separator;
 
-                if($firstCharMet && preg_match("/[A-Z]/", $fileName[$i])){
-                    $newStr .= $separator . strtolower($fileName[$i]);
-                    continue;
                 }
-
-                if(!$firstCharMet){
-                    $firstCharMet = preg_match("/[a-zA-Z]/", $fileName[$i]) == true;
-                }
-
-                if($firstCharMet){
-                    $firstCharMet = !preg_match("/[\/\\\]/", $fileName[$i]);
-                }
-
-                $newStr .= strtolower($fileName[$i]);
+            
+                $newStr .= $char;
+                $pastChar = $this->isLetter($char);
             }
 
             return $newStr;
         }
+
+        /**
+         * Checks if a letter is an upper case letter
+         * @param string $char character
+         * 
+         * @return bool
+         */                 
+        public function isUpper($char){
+            $c = ord($char);
+            if($c >= 65 && $c <= 90) return true;
+
+            return false;
+        }
+
+        /**
+         * converts a letter to an upper case letter
+         * @param string $char character
+         * 
+         * @return string
+         */
+        public function upper($char){
+            if(!$this->isLower($char)) return $char;
+
+            $c = ord($char);
+            return chr($c - ord('a') + ord('A'));
+        }
+
+        /**
+         * Checks if a character is lower case
+         * @param string $char character
+         * 
+         * @return bool
+         */
+        public function isLower($char){
+            $c = ord($char);
+            if($c >= 97 && $c <= 122) return true;
+
+            return false;
+        }
+
+        /**
+         * converts a letter to lower case
+         * @param string $char character
+         * 
+         * @return string
+         */
+        public function lower($char){
+            if(!$this->isUpper($char)) return $char;
+
+            $c = ord($char);
+            return chr($c + ord('a') - ord('A'));
+        }
+
+
+        /**
+         * Returns true if the character is an ASCII letter
+         * @param string $char character
+         * 
+         * @return bool
+         */
+        public function isLetter($char){
+            return $this->isUpper($char) || $this->isLower($char);
+        }
+
     }
 
 ?>
