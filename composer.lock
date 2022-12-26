@@ -4,21 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "723a8525968457ea9e36784c00e68b48",
-    "packages": [],
-    "packages-dev": [
+    "content-hash": "bdfdecfeb636768fdf55555af1cb4268",
+    "packages": [
         {
             "name": "levizwannah/zas-php-cli",
-            "version": "v1.1.2",
+            "version": "v1.1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/levizwannah/zas-php-cli.git",
-                "reference": "fe9029cd7e64cedee775d1a6b71421c655dc639a"
+                "reference": "1476631fa36c1525921fb1c06f80b0ac403ee5e5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/levizwannah/zas-php-cli/zipball/fe9029cd7e64cedee775d1a6b71421c655dc639a",
-                "reference": "fe9029cd7e64cedee775d1a6b71421c655dc639a",
+                "url": "https://api.github.com/repos/levizwannah/zas-php-cli/zipball/1476631fa36c1525921fb1c06f80b0ac403ee5e5",
+                "reference": "1476631fa36c1525921fb1c06f80b0ac403ee5e5",
                 "shasum": ""
             },
             "type": "library",
@@ -40,11 +39,12 @@
             "description": "The CLI tool for the ZasEnv",
             "support": {
                 "issues": "https://github.com/levizwannah/zas-php-cli/issues",
-                "source": "https://github.com/levizwannah/zas-php-cli/tree/v1.1.2"
+                "source": "https://github.com/levizwannah/zas-php-cli/tree/v1.1.2.1"
             },
-            "time": "2022-12-15T14:32:48+00:00"
+            "time": "2022-12-26T18:15:04+00:00"
         }
     ],
+    "packages-dev": [],
     "aliases": [],
     "minimum-stability": "dev",
     "stability-flags": [],

@@ -1,6 +1,6 @@
 {
     "directories": {
-        "root": "zas-php-cli",
+        "root": "zasenv",
         "supporters": "supporters",
         "actors": "actors"
     },
