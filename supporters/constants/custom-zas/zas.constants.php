@@ -3,7 +3,7 @@
 
 namespace CustomZas;
 
-use Zas\ZasConstants as OriginalZasConstants;
+use Zas\ZasConstant as OriginalZasConstant;
 
 #uns#
 
@@ -12,7 +12,7 @@ use Zas\ZasConstants as OriginalZasConstants;
  * For example, migrate, etc. Take a look at ZasConstants
  * to see what can be placed in this class.
  */
-class ZasConstants extends OriginalZasConstants{
+class ZasConstant extends OriginalZasConstant{
 
     # const ...
 }

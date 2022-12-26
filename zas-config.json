@@ -12,10 +12,10 @@
 
     "extensions": {
         "class": "class.php",
-        "abstractClass": "aclass.php",
+        "abstractClass": "abstract.php",
         "interface": "ifc.php",
         "trait": "trait.php",
-        "constantsClass": "const.php",
+        "constantsClass": "constants.php",
         "include": "inc.php",
         "configs": "config.php",
         "actors": {
@@ -30,8 +30,8 @@
         "interface": "/supporters/templates/interface.tpl",
         "trait": "/supporters/templates/trait.tpl",
         "constantsClass": "/supporters/templates/const.tpl",
+        "configs": "/supporters/templates/config.tpl",
         "setup": "/supporters/templates/setup.tpl",
-        "configs" : "/supporters/templates/config.tpl",
         "actors" : {
             "foreground": "/supporters/templates/foreground.tpl",
             "background": "/supporters/templates/background.tpl",
@@ -57,7 +57,7 @@
         "abstractClass": "^Abstract\\w+$",
         "interface": "^\\w+Interface$",
         "trait": "\\w+Trait$",
-        "constantsClass": "\\w+Constants$",
+        "constantsClass": "\\w+Constant$",
         "class": ".*"
     },
 

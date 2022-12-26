@@ -1,11 +1,14 @@
 <?php
 /*
 |----------------------------------------------------------
-| Do all necessary autoloading here.
-| Vendor autoloading is done by the autoloader.
+| Do all necessary auto-loading here.
+| Vendor auto-loading is done by the auto-loader.
 |----------------------------------------------------------
 */
-require(__DIR__ . "/autoloader.class.php");
+
+use CustomZas\Cli;
+
+require(__DIR__ . "/auto-loader.class.php");
 
 /*--------------------------------------------------------
 |   GLOBAL VARIABLES
@@ -13,7 +16,8 @@ require(__DIR__ . "/autoloader.class.php");
 */
 $zasConfig = json_decode(file_get_contents(__DIR__ . "/zas-config.json"));
 
-$autoloader = new Autoloader();
-$autoloader->autoLoad();
-    
+$autoLoader = new AutoLoader();
+$autoLoader->autoLoad();
+
+Cli::log($zasConfig->directories->root)
 ?>
