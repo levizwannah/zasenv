@@ -1,7 +1,8 @@
 <?php
 
 /**
- *  Autoloads classes, interfaces, and traits. It also automatically include the vendor autoloader if the folder is present.
+ *  Autoloads classes, interfaces, and traits. It also automatically include the vendor auto 
+ * loader if the folder is present.
  *  **requires that the zas-config.json be configured properly.**
  */
 class AutoLoader{
@@ -10,6 +11,7 @@ class AutoLoader{
     const ZC_ACLASS = "abstractClass";
     const ZC_CONST = "constantsClass";
     const ZC_INTERFACE = "interface";
+    
     /**
      * Path Object from the zas-config
      */
