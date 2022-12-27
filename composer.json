@@ -15,11 +15,9 @@
         "sort-packages": true
     },
     "scripts": {
-        "post-root-package-install": [
-            "@php zas update-root-path"
-        ],
         "post-create-project-cmd": [
-            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\""
+            "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
+            "@php zas update-root-path"
         ]
     }
 }
