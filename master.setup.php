@@ -18,6 +18,4 @@ $zasConfig = json_decode(file_get_contents(__DIR__ . "/zas-config.json"));
 
 $autoLoader = new AutoLoader();
 $autoLoader->autoLoad();
-
-Cli::log($zasConfig->directories->root)
 ?>

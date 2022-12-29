@@ -9,12 +9,16 @@ use Zas\ZasConstant as OriginalZasConstant;
 
 /**
  * Put your custom constants here for ZAS.
- * For example, migrate, etc. Take a look at ZasConstants
+ * For example, migrate, etc. Take a look at ZasConstant
  * to see what can be placed in this class.
  */
 class ZasConstant extends OriginalZasConstant{
 
     # const ...
+/* 
+    const ZC_CREATE = "create";
+*/
+
 }
 
 ?>
