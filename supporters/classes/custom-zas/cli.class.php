@@ -19,13 +19,28 @@ class Cli extends ZasHelper  {
      * @return void
      */
     public function process(int &$argc, array &$argv){
+
+        # checking if this command exists already
         $found = parent::process($argc, $argv);
 
+        # if found, then exit
         if($found) return true;
+
+        # else zas checks here. so,
         # add your commands here in a switch statement
-        # use the ZasConstants to define your constants
-        # show list
-        $mainCommand = strtolower($argv[1]);
+        # use the ZasConstant to define your constants
+
+        $mainCommand = strtolower($argv[1]); // for example 'make' is the main
+                                             // command in `php zas make class`
+
+        switch($mainCommand) {
+            # code goes here
+            # case ZasConstant::ZC_CREATE: then $this->doSomething($argc, $argv) 
+            # doSomething($argc, $argv) are implemented
+            # in supporters/classes/custom-zas/zas-helper.class.php
+            # ZasConstant::ZC_CREATE: is defined in 
+            # supporters/constants/custom-zas/zas.constants.php
+        }
 
         Cli::log("You enter an unknown command");
         return false;
