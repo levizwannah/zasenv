@@ -5,6 +5,12 @@
  * Add logic in here or elsewhere to restrict call to cli only and not http
  */
 
-require(__DIR__."/../setup.php"); 
-
+ (
+    isset($loaded)
+    &&
+    isset($loaded[dirname(__DIR__)])
+)
+or
+require(dirname(__DIR__)."/setup.php");
+$loaded[__DIR__] = 1;
 ?>
