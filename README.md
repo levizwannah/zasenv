@@ -1,5 +1,5 @@
 # zasenv
-A CLI tool that sets up an API environment following the ZAS Specification.
+- A CLI tool that sets up an API environment following the ZAS Specification.
 
 # documentation
 Find the full documentation here: https://github.com/levizwannah/zasenv/wiki
